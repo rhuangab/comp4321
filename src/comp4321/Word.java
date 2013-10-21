@@ -28,6 +28,7 @@ public class Word {
 	private RecordManager recman;
 	int wordCount;
 	
+	/**constructor**/
 	public Word(RecordManager _recman) throws IOException
 	{		
 		recman = _recman;
