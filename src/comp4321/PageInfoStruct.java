@@ -7,7 +7,7 @@ import java.net.URLConnection;
 import java.util.Date;
 
 import org.htmlparser.util.ParserException;
-
+/*hello*/
 public class PageInfoStruct implements Serializable{
 	private String m_url;
 	private String m_pageId;
