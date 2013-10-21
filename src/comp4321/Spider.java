@@ -1,6 +1,7 @@
 package comp4321;
 
 import java.io.IOException;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Vector;
@@ -18,6 +19,7 @@ public class Spider {
 	private static Indexer indexer;
 	private FileStruc pageID;
 	private int pageCount;
+	private static PageRank pageRank;
 	
 	public Spider(String recordmanager) throws IOException
 	{
@@ -26,6 +28,7 @@ public class Spider {
 		indexer = new Indexer(recman);
 		pageID = new FileStruc(recman,"pageID");
 		pageCount = pageID.getSize();
+		pageRank = new PageRank(recman);
 	}
 	
 	public void finalize() throws IOException
@@ -35,12 +38,13 @@ public class Spider {
 		recman.close();				
 	}
 	
-	public void insertPage(String url) throws IOException
+	public String insertPage(String url) throws IOException
 	{
 		if(pageID.getEntry(url) != null)
-			return;
+			return (String) pageID.getEntry(url);
 		String id = String.format("%04d", pageCount++);
 		pageID.addEntry(url, id);
+		return id;
 	}
 	
 	public String getPageID(String url) throws IOException
@@ -51,28 +55,58 @@ public class Spider {
 		return  (String) pageID.getEntry(url);
 	}
 	
+	/**
+	 * @Param url, maxPage
+	 * @return
+	 * Start from url, traverse all appeared urls until no pages left or the number of visited pages reach maxPage
+	 */
 	public void indexing(String url, int maxPage) throws IOException, ParserException
 	{
+		// Queue of to be processed and processed urls.
 		Queue<String> cands = new LinkedList<String>();
+		Queue<String> processed = new LinkedList<String>();
 		
 		cands.add(url);
 		
-		while(cands.size() != 0 && pageCount < maxPage)
+		while(cands.size() != 0 && processed.size() < maxPage)
 		{
 			String indexURL = cands.remove();
 			
-			if(getPageID(indexURL) != null)
+			// if the file is already processed, continue
+			if(processed.contains(indexURL))
 				continue;
 			
-			insertPage(indexURL);
-			String page_id = getPageID(indexURL);
 			
+			String page_id = insertPage(indexURL);
+			
+			//System.out.println("indexing "+ page_id);
+			//System.out.println("before"+cands.size());
 			indexer.indexNewPage(page_id, indexURL);
 			
-			Vector<String> links = indexer.extractLinks(indexURL);
+			// For all children links, add to the candidates, insertPage
+			Vector<String> links_dup = indexer.extractLinks(indexURL);
+			Vector<String> ids = new Vector<String>();
 			
-			for(int i = 0; i < links.size(); i++)
-				cands.add(links.get(i));
+			Vector<String> links = new Vector<String>(new LinkedHashSet<String>(links_dup));
+			
+			String oneID;
+			for(String oneLink:links) 
+			{
+				// if either pageCount not reach max, or this page has already been discovered
+				if(pageCount < maxPage || getPageID(oneLink)!=null) 	
+				{
+					oneID = insertPage(oneLink);		// get id if already exists, or insert and get id.
+					ids.add(oneID);						// add the id of the child to ids vector
+					cands.add(oneLink);					// add the child to the candidates
+				}
+			}
+			
+			pageRank.addChildLink(page_id, ids);
+			//pageRank.addParentLink(page_id, ids);
+			
+			//System.out.println("after"+cands.size());
+			processed.add(url);
+		
 		}
 	}
 	
@@ -97,6 +131,7 @@ public class Spider {
 		FileStruc invertedWord = new FileStruc(recman, "invertedWord");
 		FileStruc word = new FileStruc(recman,"word");
 		FileStruc pageInfo = new FileStruc(recman, "pageInfo");
+		FileStruc childLink = new FileStruc(recman,"childLink");
 		
 		/**print word_id -> word**/
 		/*
@@ -152,6 +187,22 @@ public class Spider {
 		}*/
 		
 		/** print child_link **/
+		/*
+		HTree hashtable = childLink.getHash();			
+		FastIterator iter = hashtable.keys();
+		String keyword = null;
+		while( (keyword=(String)iter.next()) != null )
+		{
+			Vector<String> temp = (Vector<String>) hashtable.get(keyword);
+			
+			System.out.println("\n" + ((PageInfoStruct)pageInfo.getEntry(keyword)).getURL() + " " + temp.size() + ":");
+			for(int i=0;i<temp.size();i++)
+			{
+				PageInfoStruct pis = (PageInfoStruct) pageInfo.getEntry(temp.elementAt(i));
+				System.out.println("Child" + (i+1) +": "+pis.getURL());
+			}
+				
+		}*/
 		
 		spider.finalize();
 		
