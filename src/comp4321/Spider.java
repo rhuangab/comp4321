@@ -151,6 +151,8 @@ public class Spider {
 			System.out.println();
 		}*/
 		
+		/** print child_link **/
+		
 		spider.finalize();
 		
 		long t2 = System.currentTimeMillis();
