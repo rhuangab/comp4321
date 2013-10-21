@@ -64,6 +64,11 @@ public class PageInfoStruct implements Serializable{
 		return m_title;
 	}
 	
+	public String getURL()
+	{
+		return m_url;
+	}
+	
 	public String extractTitle(String url) throws ParserException
 	{
 		// extract title in url and return it
