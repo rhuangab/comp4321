@@ -95,7 +95,20 @@ public class Spider {
 		FileStruc wordID = new FileStruc(recman,"wordID");
 		FileStruc wordTF = new FileStruc(recman,"wordTF");
 		FileStruc invertedWord = new FileStruc(recman, "invertedWord");
+		FileStruc word = new FileStruc(recman,"word");
 		FileStruc pageInfo = new FileStruc(recman, "pageInfo");
+		
+		/**print word_id -> word**/
+		/*
+		HTree hashtable = word.getHash();
+		FastIterator iter = hashtable.keys();
+		String keyword = null;
+		while( (keyword=(String)iter.next()) != null)
+		{
+			String temp = (String) hashtable.get(keyword);
+			System.out.println(keyword + " : " + temp);
+		}*/
+		
 		/**print word -> word_id**/
 		/*
 		HTree hashtable = wordID.getHash();

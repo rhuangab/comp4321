@@ -25,6 +25,7 @@ public class Word {
 	private FileStruc wordID;
 	private FileStruc wordTF;
 	private FileStruc invertedWord;
+	private FileStruc word;
 	private RecordManager recman;
 	int wordCount;
 	
@@ -36,17 +37,19 @@ public class Word {
 		wordID = new FileStruc(recman,"wordID");
 		wordTF = new FileStruc(recman,"wordTF");
 		invertedWord = new FileStruc(recman, "invertedWord");
+		word = new FileStruc(recman, "word");
 		wordCount = wordID.getSize();
 	}
 	
 	/**insert a new word**/
-	public String insertWord(String word) throws IOException
+	public String insertWord(String newWord) throws IOException
 	{
-		if(wordID.getEntry(word) != null)
-			return (String) wordID.getEntry(word);
+		if(wordID.getEntry(newWord) != null)
+			return (String) wordID.getEntry(newWord);
 		
 		String id = String.format("%08d", wordCount++);
-		wordID.addEntry(word, id);
+		wordID.addEntry(newWord, id);
+		word.addEntry(id, newWord);
 		return id;
 	}
 	
