@@ -14,7 +14,7 @@ public class PageInfoStruct implements Serializable{
 	private String m_title;
 	private Date m_lastModification;
 	private int m_size;
-	
+	//hello
 	public PageInfoStruct(String url, String pageId) throws ParserException
 	{
 	  m_url = url;
