@@ -21,6 +21,7 @@ public class TestProgram {
 	private FileStruc wordTF;
 	private FileStruc wordID;
 	private FileStruc invertedWord;
+	private FileStruc wordIDToWord;
 	//private FileStruc childLinks;
 	
 	public TestProgram(String db) throws IOException
@@ -33,6 +34,7 @@ public class TestProgram {
 		wordTF = new FileStruc(recman,"wordTF");
 		wordID = new FileStruc(recman,"wordID");
 		invertedWord = new FileStruc(recman, "invertedWord");
+		wordIDToWord = new FileStruc(recman, "word");
 		//childLinks = new FileStruc(recman,"childLinks");
 	}
 	
@@ -53,15 +55,16 @@ public class TestProgram {
 		{
 			String pageid = (String) hashTable.get(url);
 			PageInfoStruct pis = (PageInfoStruct) pageInfo.getEntry(pageid);
-			Vector<String> wordLists = (Vector<String>) wordID.getEntry(pageid);
+			//get word_id list
+			Vector<String> wordIDLists = (Vector<String>) invertedWord.getEntry(pageid);
 			pw.println(pis.getTitle());
 			pw.println(url);
 			pw.println("Last Modification: "+ pis.getLastModification() + ", Size:"+ pis.getPageSize());
 			String wordListsToPrint = "";
-			System.out.println(wordID.getSize());
-			for(String word : wordLists)
+			for(String word_id : wordIDLists)
 			{
-				Vector<Posting> postingList = (Vector<Posting>) wordTF.getEntry(word);
+				String word = (String) wordIDToWord.getEntry(word_id);
+				Vector<Posting> postingList = (Vector<Posting>) wordTF.getEntry(word_id);
 				for(Posting p : postingList)
 				{
 					if(p.page_id.equals(pageid))
@@ -70,8 +73,13 @@ public class TestProgram {
 						break;
 					}
 				}
+				/*
+				 *  word -> word id
+				 *  wordid -> List(pageid,tf)
+				 *  pageid -> wordId(invertedword)
+				 */
 			}
-			wordListsToPrint = wordListsToPrint.substring(1); //cut the ',' at the first place.
+			wordListsToPrint = wordListsToPrint.substring(2); //cut the ',' at the first place.
 			pw.println(wordListsToPrint);
 			pw.println("------------------------------------------------------------");
 		}
