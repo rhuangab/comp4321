@@ -28,6 +28,7 @@ public class Word {
 	private FileStruc word;
 	private RecordManager recman;
 	int wordCount;
+	private int pageSize;
 	
 	/**constructor
 	 * **/
@@ -113,7 +114,7 @@ public class Word {
 	public void indexWordInfo(String page_id, String url) throws ParserException, IOException
 	{
 		Vector<String> words = Indexer.extractWords(url);
-		
+		pageSize = words.size();
 		HashMap<String, Integer> temp = new HashMap<String, Integer>();
 		for(int i = 0; i < words.size(); i++)
 		{
@@ -152,6 +153,11 @@ public class Word {
 	        insertWordTF(pairs.getKey(), page_id, pairs.getValue());
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
+	}
+	
+	public int getPageSize()
+	{
+		return pageSize;
 	}
 
 }

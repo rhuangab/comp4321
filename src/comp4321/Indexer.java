@@ -36,7 +36,7 @@ public class Indexer {
 		//title_sample.insertTitle(page_id, url);
 		/**the only function you need to call in order to index the word-related information**/
 		word.indexWordInfo(page_id, url);
-		pageInfo.insertElement(page_id, url);
+		pageInfo.insertElement(page_id, url,word.getPageSize());
 		//word.indexWordInfo("0030","http://ihome.ust.hk/~mxieaa/");
 	}
 	 

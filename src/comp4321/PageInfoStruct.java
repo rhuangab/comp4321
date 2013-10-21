@@ -6,26 +6,30 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.Date;
 
+import org.htmlparser.Node;
+import org.htmlparser.Parser;
+import org.htmlparser.filters.TagNameFilter;
 import org.htmlparser.util.ParserException;
-/*hello*/
+import org.htmlparser.visitors.HtmlPage;
+
 public class PageInfoStruct implements Serializable{
 	private String m_url;
 	private String m_pageId;
 	private String m_title;
 	private Date m_lastModification;
 	private int m_size;
-	//hello
-	public PageInfoStruct(String url, String pageId) throws ParserException
+
+	public PageInfoStruct(String url, String pageId, int pageSize) throws ParserException
 	{
 	  m_url = url;
 		m_pageId = pageId;
+		m_size = pageSize;
 		initialize();
 	}
 	
 	public void initialize() throws ParserException
 	{
-		Crawler crawler = new Crawler(m_url);
-		m_title = crawler.extractTitle();
+		m_title = extractTitle(m_url);
 		URLConnection hc;
     try {
     	URL url = new URL(m_url);
@@ -34,7 +38,9 @@ public class PageInfoStruct implements Serializable{
 			if(date == 0)
 				date = hc.getDate();
 			m_lastModification = new Date(date);
-			m_size = hc.getContentLength();
+			//if the content length is unknown, which return -1, we use the length of the extractedWords.
+			if(hc.getContentLength() >= 0)
+				m_size = hc.getContentLength();
     }
     catch (IOException e) {
 	    // TODO Auto-generated catch block
@@ -56,5 +62,16 @@ public class PageInfoStruct implements Serializable{
 	public String getTitle()
 	{
 		return m_title;
+	}
+	
+	public String extractTitle(String url) throws ParserException
+	{
+		// extract title in url and return it
+		Parser parser = new Parser();
+		parser.setURL(url);
+		//HtmlPage htmlPage = new HtmlPage(parser);
+		//System.out.println((htmlPage.getTitle()));
+		Node node = (Node)parser.extractAllNodesThatMatch(new TagNameFilter ("title")).elementAt(0);
+		return node.toPlainTextString();
 	}
 }

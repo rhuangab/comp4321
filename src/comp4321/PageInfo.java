@@ -21,9 +21,9 @@ public class PageInfo {
 		pageInfo = new FileStruc(recman,"pageInfo");
 	}
 	
-	public void insertElement(String page_id, String url) throws ParserException, IOException
+	public void insertElement(String page_id, String url, int pageSize) throws ParserException, IOException
 	{
-		PageInfoStruct newPageInfo = new PageInfoStruct(url,page_id);
+		PageInfoStruct newPageInfo = new PageInfoStruct(url,page_id,pageSize);
 		if(pageInfo.getEntry(page_id) !=null)
 		{
 			//PageInfo dbPageInfo = (PageInfo) pageInfoTable.getEntry(page_id);
@@ -42,7 +42,7 @@ public class PageInfo {
 			return null;
 	}
 	
-	public FileStruc getTitles()
+	public FileStruc getName()
 	{
 		return pageInfo;
 	}
