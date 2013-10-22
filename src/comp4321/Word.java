@@ -22,10 +22,10 @@ class Posting implements Serializable {
 	
 }
 public class Word {
-	private FileStruc wordID;
-	private FileStruc wordTF;
-	private FileStruc invertedWord;
-	private FileStruc word;
+	private DataStruc wordID;
+	private DataStruc wordTF;
+	private DataStruc invertedWord;
+	private DataStruc word;
 	private RecordManager recman;
 	int wordCount;
 	private int pageSize;
@@ -35,10 +35,10 @@ public class Word {
 	public Word(RecordManager _recman) throws IOException
 	{		
 		recman = _recman;
-		wordID = new FileStruc(recman,"wordID");
-		wordTF = new FileStruc(recman,"wordTF");
-		invertedWord = new FileStruc(recman, "invertedWord");
-		word = new FileStruc(recman, "word");
+		wordID = new DataStruc(recman,"wordID");
+		wordTF = new DataStruc(recman,"wordTF");
+		invertedWord = new DataStruc(recman, "invertedWord");
+		word = new DataStruc(recman, "word");
 		wordCount = wordID.getSize();
 	}
 	

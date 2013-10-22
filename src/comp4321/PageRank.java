@@ -9,18 +9,18 @@ import jdbm.RecordManager;
 public class PageRank {
 	
 	private RecordManager recman;
-	private FileStruc parentLink;
-	private FileStruc childLink;
-	private FileStruc hubWeight;
-	private FileStruc authWeight;
+	private DataStruc parentLink;
+	private DataStruc childLink;
+	private DataStruc hubWeight;
+	private DataStruc authWeight;
 	
 	public PageRank(RecordManager _recman) throws IOException 
 	{
 		recman = _recman;
-		parentLink = new FileStruc(recman, "parentLink");
-		childLink = new FileStruc(recman, "childLink");
-		hubWeight = new FileStruc(recman, "hubWeight");
-		authWeight = new FileStruc(recman, "authWeight");
+		parentLink = new DataStruc(recman, "parentLink");
+		childLink = new DataStruc(recman, "childLink");
+		hubWeight = new DataStruc(recman, "hubWeight");
+		authWeight = new DataStruc(recman, "authWeight");
 	}
 	
 	/**
@@ -57,13 +57,13 @@ public class PageRank {
 		}
 	}
 	
-	public FileStruc computeHub (float dumplingFactor) throws IOException
+	public DataStruc computeHub (float dumplingFactor) throws IOException
 	{
 		
 		return hubWeight;
 	}
 	
-	public FileStruc computeAuth (float dumplingFactor) throws IOException
+	public DataStruc computeAuth (float dumplingFactor) throws IOException
 	{
 		
 		return authWeight;

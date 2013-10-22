@@ -11,13 +11,13 @@ import jdbm.RecordManager;
 
 public class Title_sample {
 	
-	private FileStruc title;
+	private DataStruc title;
 	private RecordManager recman;
 	
 	public Title_sample(RecordManager _recman) throws IOException
 	{		
 		recman = _recman;
-		title = new FileStruc(recman,"title");
+		title = new DataStruc(recman,"title");
 	}
 	
 	public void insertTitle(String page_id, String url) throws ParserException, IOException
@@ -30,7 +30,7 @@ public class Title_sample {
 		title.addEntry(page_id, node.toPlainTextString());
 	}
 	
-	public FileStruc getTitles()
+	public DataStruc getTitles()
 	{
 		return title;
 	}

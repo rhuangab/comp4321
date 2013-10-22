@@ -17,7 +17,7 @@ public class Spider {
 	
 	private static RecordManager recman;
 	private static Indexer indexer;
-	private FileStruc pageID;
+	private DataStruc pageID;
 	private int pageCount;
 	private static PageRank pageRank;
 	
@@ -26,7 +26,7 @@ public class Spider {
 		recman = RecordManagerFactory.createRecordManager(recordmanager);
 		
 		indexer = new Indexer(recman);
-		pageID = new FileStruc(recman,"pageID");
+		pageID = new DataStruc(recman,"pageID");
 		pageCount = pageID.getSize();
 		pageRank = new PageRank(recman);
 	}
@@ -126,12 +126,12 @@ public class Spider {
 		
 		/** You can uncomment the following codes to see the outputs **/
 		
-		FileStruc wordID = new FileStruc(recman,"wordID");
-		FileStruc wordTF = new FileStruc(recman,"wordTF");
-		FileStruc invertedWord = new FileStruc(recman, "invertedWord");
-		FileStruc word = new FileStruc(recman,"word");
-		FileStruc pageInfo = new FileStruc(recman, "pageInfo");
-		FileStruc childLink = new FileStruc(recman,"childLink");
+		DataStruc wordID = new DataStruc(recman,"wordID");
+		DataStruc wordTF = new DataStruc(recman,"wordTF");
+		DataStruc invertedWord = new DataStruc(recman, "invertedWord");
+		DataStruc word = new DataStruc(recman,"word");
+		DataStruc pageInfo = new DataStruc(recman, "pageInfo");
+		DataStruc childLink = new DataStruc(recman,"childLink");
 		
 		/**print word_id -> word**/
 		/*

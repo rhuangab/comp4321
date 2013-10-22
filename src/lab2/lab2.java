@@ -77,7 +77,7 @@ public class lab2 {
 
 		try
 		{
-			lab2 crawler = new lab2("http://www.cs.ust.hk/");
+			lab2 crawler = new lab2("http://www.cse.ust.hk/pg");
 
 
 			Vector<String> words = crawler.extractWords();			

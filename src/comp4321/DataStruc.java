@@ -6,11 +6,11 @@ import jdbm.RecordManager;
 import jdbm.helper.FastIterator;
 import jdbm.htree.HTree;
 
-public class FileStruc {
+public class DataStruc {
 
 	private HTree hashtable;
 	
-	public FileStruc(RecordManager recman, String objectname) throws IOException
+	public DataStruc(RecordManager recman, String objectname) throws IOException
 	{
 		// Constructor, get the hashtable from db, build a new one if it does not exist
 		long recid = recman.getNamedObject(objectname);
@@ -58,6 +58,11 @@ public class FileStruc {
 		while( iter.next() != null)
 			count++;
 		return count;
+	}
+	
+	public FastIterator getIterator() throws IOException
+	{
+		return getHash().keys();
 	}
 	
 	public void clear() throws IOException{

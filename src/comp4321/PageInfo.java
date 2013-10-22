@@ -12,13 +12,13 @@ import jdbm.RecordManager;
 
 public class PageInfo {
 	
-	private FileStruc pageInfo;
+	private DataStruc pageInfo;
 	private RecordManager recman;
 	
 	public PageInfo(RecordManager _recman) throws IOException
 	{		
 		recman = _recman;
-		pageInfo = new FileStruc(recman,"pageInfo");
+		pageInfo = new DataStruc(recman,"pageInfo");
 	}
 	
 	public void insertElement(String page_id, String url, int pageSize) throws ParserException, IOException
@@ -42,7 +42,7 @@ public class PageInfo {
 			return null;
 	}
 	
-	public FileStruc getName()
+	public DataStruc getName()
 	{
 		return pageInfo;
 	}
