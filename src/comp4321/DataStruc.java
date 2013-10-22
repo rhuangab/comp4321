@@ -62,22 +62,8 @@ public class DataStruc {
 	
 	public FastIterator getIterator() throws IOException
 	{
+		//return the keys
 		return getHash().keys();
 	}
-	
-	public void clear() throws IOException{
-		FastIterator iter = hashtable.keys();
-		
-		//String temp = (String) iter.next();
-		
-		this.delEntry("0003");
-		/*while(temp != null)
-		{
-			System.out.println(temp);
-			//this.delEntry("0003");
-			temp = (String) iter.next();
-		}*/
-	}
-	
-	
+
 }

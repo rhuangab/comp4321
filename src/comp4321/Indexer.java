@@ -17,7 +17,6 @@ import jdbm.RecordManager;
 public class Indexer {
 	
 	private RecordManager recman;
-	private Title_sample title_sample;
 	/**add a private field**/
 	private Word word;
 	private PageInfo pageInfo;
@@ -25,7 +24,6 @@ public class Indexer {
 	public Indexer(RecordManager _recman) throws IOException
 	{		
 		recman = _recman;
-		//title_sample = new Title_sample(recman);
 		/**construct the private field**/
 		pageInfo = new PageInfo(recman);
 		word = new Word(recman);
@@ -33,13 +31,17 @@ public class Indexer {
 	
 	public void indexNewPage(String page_id, String url) throws ParserException, IOException
 	{
-		//title_sample.insertTitle(page_id, url);
-		/**the only function you need to call in order to index the word-related information**/
+		/**the only functions you need to call in order to index information**/
 		word.indexWordInfo(page_id, url);
 		pageInfo.insertElement(page_id, url,word.getPageSize());
-		//word.indexWordInfo("0030","http://ihome.ust.hk/~mxieaa/");
 	}
-	 
+	
+	/**
+	 * extract words from a given url
+	 * @param url
+	 * @return
+	 * @throws ParserException
+	 */
 	public static Vector<String> extractWords(String url) throws ParserException
 	{
 		StringBean sb;
@@ -60,6 +62,12 @@ public class Indexer {
         return (v_str);
 	}
 	
+	/**
+	 * extract links from a given url
+	 * @param url
+	 * @return
+	 * @throws ParserException
+	 */
 	public static Vector<String> extractLinks(String url) throws ParserException
 	{
         Vector<String> v_link = new Vector<String>();

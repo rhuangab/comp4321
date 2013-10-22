@@ -15,12 +15,20 @@ import jdbm.htree.HTree;
 
 public class Spider {
 	
+	/**
+	 * the basic information
+	 */
 	private static RecordManager recman;
 	private static Indexer indexer;
 	private DataStruc pageID;
 	private int pageCount;
 	private static PageRank pageRank;
 	
+	/**
+	 * constructor
+	 * @param recordmanager
+	 * @throws IOException
+	 */
 	public Spider(String recordmanager) throws IOException
 	{
 		recman = RecordManagerFactory.createRecordManager(recordmanager);
@@ -38,6 +46,12 @@ public class Spider {
 		recman.close();				
 	}
 	
+	/**
+	 * insert a new page
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
 	public String insertPage(String url) throws IOException
 	{
 		if(pageID.getEntry(url) != null)
@@ -47,6 +61,12 @@ public class Spider {
 		return id;
 	}
 	
+	/**
+	 * get page Id given a url
+	 * @param url
+	 * @return
+	 * @throws IOException
+	 */
 	public String getPageID(String url) throws IOException
 	{
 		if(pageID.getEntry(url) == null)
@@ -125,14 +145,14 @@ public class Spider {
 		spider.indexing(startUrl, maxPage);
 		
 		/** You can uncomment the following codes to see the outputs **/
-		
+		/*
 		DataStruc wordID = new DataStruc(recman,"wordID");
 		DataStruc wordTF = new DataStruc(recman,"wordTF");
 		DataStruc invertedWord = new DataStruc(recman, "invertedWord");
 		DataStruc word = new DataStruc(recman,"word");
 		DataStruc pageInfo = new DataStruc(recman, "pageInfo");
 		DataStruc childLink = new DataStruc(recman,"childLink");
-		
+		*/
 		/**print word_id -> word**/
 		/*
 		HTree hashtable = word.getHash();
