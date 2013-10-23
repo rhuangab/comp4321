@@ -9,7 +9,11 @@ import org.htmlparser.filters.TagNameFilter;
 import org.htmlparser.util.ParserException;
 
 import jdbm.RecordManager;
-
+/**
+ * 
+ * @author HUANG Richeng
+ * This table stores (page_id -> pageInfoStruct)
+ */
 public class PageInfo {
 	
 	private DataStruc pageInfo;
@@ -21,13 +25,12 @@ public class PageInfo {
 		pageInfo = new DataStruc(recman,"pageInfo");
 	}
 	
+	/** Given page_id, insert the pageInfoStruct into hashtable. **/
 	public void insertElement(String page_id, String url, int pageSize) throws ParserException, IOException
 	{
 		PageInfoStruct newPageInfo = new PageInfoStruct(url,page_id,pageSize);
 		if(pageInfo.getEntry(page_id) !=null)
 		{
-			//PageInfo dbPageInfo = (PageInfo) pageInfoTable.getEntry(page_id);
-			pageInfo.delEntry(page_id);
 			pageInfo.addEntry(page_id, newPageInfo);
 		}
 		pageInfo.addEntry(page_id, newPageInfo);
