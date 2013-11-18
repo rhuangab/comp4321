@@ -135,7 +135,7 @@ public class Spider {
 		String db = "comp4321";
 		String startUrl = "http://www.cse.ust.hk/";
 		
-		final int maxPage = 30;
+		final int maxPage = 1;
 		
 		long t1 = System.currentTimeMillis();
 		
@@ -147,7 +147,8 @@ public class Spider {
 		/** You can uncomment the following codes to see the outputs **/
 		
 		DataStruc wordID = new DataStruc(recman,"wordID");
-		DataStruc wordTF = new DataStruc(recman,"wordTF");
+		DataStruc bodyWord = new DataStruc(recman,"bodyWord");
+		DataStruc titleWord = new DataStruc(recman,"titleWord");
 		DataStruc invertedWord = new DataStruc(recman, "invertedWord");
 		DataStruc word = new DataStruc(recman,"word");
 		DataStruc pageInfo = new DataStruc(recman, "pageInfo");
@@ -175,12 +176,34 @@ public class Spider {
 			System.out.println(keyword + " : " + temp);
 		}*/
 		
-		/**print word_id -> list(page_id, term_freq)**/
+		/**print word_id -> list(page_id, term_freq, postion)**/
 		/*
-		HTree hashtable = wordTF.getHash();
-		System.out.print(wordTF.getSize());
+		HTree hashtable = bodyWord.getHash();
+		System.out.println("==========================body=========================");
 		FastIterator iter = hashtable.keys();
 		String keyword = null;
+		while( (keyword=(String)iter.next()) != null)
+		{
+			Vector<Posting> temp = (Vector<Posting>) hashtable.get(keyword);
+			HTree wordtemp = word.getHash();
+			keyword = (String) wordtemp.get(keyword);
+			System.out.print(keyword + ":");
+			for(Posting i: temp)
+			{
+				System.out.print("(" + i.page_id + ", " + i.freq + ", <" );
+				Vector<Integer> pos = i.position;
+				for(Integer p:pos)
+					System.out.print(p + " ");
+				System.out.print(">)");
+			}
+			
+			System.out.println();
+		}*/
+		/*
+		hashtable = titleWord.getHash();
+		System.out.println("==========================title=========================");
+		iter = hashtable.keys();
+		keyword = null;
 		while( (keyword=(String)iter.next()) != null)
 		{
 			Vector<Posting> temp = (Vector<Posting>) hashtable.get(keyword);
@@ -203,16 +226,20 @@ public class Spider {
 			Vector<String> temp = (Vector<String>) hashtable.get(keyword);
 			System.out.print(keyword + " " + temp.size() + ":");
 			for(String i: temp)
+			{
+				HTree wordtemp = word.getHash();
+				i = (String) wordtemp.get(i);
 				System.out.print("(" + i + ") " );
+			}
 			
 			System.out.println();
 		}*/
-		
+	
 		/** print child_link **/
 		/*
-		HTree hashtable = childLink.getHash();			
-		FastIterator iter = hashtable.keys();
-		String keyword = null;
+		hashtable = childLink.getHash();			
+		iter = hashtable.keys();
+		keyword = null;
 		while( (keyword=(String)iter.next()) != null )
 		{
 			Vector<String> temp = (Vector<String>) hashtable.get(keyword);

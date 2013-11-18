@@ -79,6 +79,21 @@ public class Indexer {
         }
 		return v_link;
 	}
+	
+	/** extract the content in the title tag from the html page. **/ 
+	public static String extractTitle(String url) throws ParserException
+	{
+		// extract title in url and return it
+		Parser parser = new Parser();
+		parser.setURL(url);
+		//HtmlPage htmlPage = new HtmlPage(parser);
+		//System.out.println((htmlPage.getTitle()));
+		Node node = (Node)parser.extractAllNodesThatMatch(new TagNameFilter ("title")).elementAt(0);
+		if(node != null)
+			return node.toPlainTextString();
+		else
+			return null;
+	}
 
 }
 

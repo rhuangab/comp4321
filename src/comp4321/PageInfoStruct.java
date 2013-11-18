@@ -32,7 +32,7 @@ public class PageInfoStruct implements Serializable{
 	
 	public void initialize() throws ParserException, IOException
  {
-		m_title = extractTitle(m_url);
+		m_title = Indexer.extractTitle(m_url);
 		
 		//set up a URL connection to retrieve the page information
 		URLConnection hc;
@@ -70,18 +70,5 @@ public class PageInfoStruct implements Serializable{
 		return m_url;
 	}
 	
-	/** extract the content in the title tag from the html page. **/ 
-	public String extractTitle(String url) throws ParserException
-	{
-		// extract title in url and return it
-		Parser parser = new Parser();
-		parser.setURL(url);
-		//HtmlPage htmlPage = new HtmlPage(parser);
-		//System.out.println((htmlPage.getTitle()));
-		Node node = (Node)parser.extractAllNodesThatMatch(new TagNameFilter ("title")).elementAt(0);
-		if(node != null)
-			return node.toPlainTextString();
-		else
-			return null;
-	}
+
 }

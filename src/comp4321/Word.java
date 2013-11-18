@@ -14,16 +14,20 @@ import jdbm.RecordManager;
 class Posting implements Serializable {
 	public String page_id;
 	public int freq;
+	public Vector<Integer> position;
 
-	Posting(String doc, int freq) {
+	Posting(String doc, int freq, Vector<Integer> position) {
 		this.page_id = doc;
 		this.freq = freq;
+		this.position = position;
 	}
-	
 }
+
+
 public class Word {
 	private DataStruc wordID;
-	private DataStruc wordTF;
+	private DataStruc bodyWord;
+	private DataStruc titleWord;
 	private DataStruc invertedWord;
 	private DataStruc word;
 	private RecordManager recman;
@@ -37,7 +41,8 @@ public class Word {
 	{		
 		recman = _recman;
 		wordID = new DataStruc(recman,"wordID");
-		wordTF = new DataStruc(recman,"wordTF");
+		bodyWord = new DataStruc(recman,"bodyWord");
+		titleWord = new DataStruc(recman,"titleWord");
 		invertedWord = new DataStruc(recman, "invertedWord");
 		word = new DataStruc(recman, "word");
 		wordCount = wordID.getSize();
@@ -51,7 +56,7 @@ public class Word {
 		newWord = stopstem.processing(newWord);
 		//System.out.println(temp + " " + newWord);
 		
-		if(newWord == null)
+		if(newWord == null || newWord =="")
 			return null;
 		
 		if(wordID.getEntry(newWord) != null)
@@ -73,22 +78,42 @@ public class Word {
 	}
 	
 	
-	/**if the list exist. add the new word to the end, else create a new list**/
-	public void insertWordTF(String word_id, String page_id, int word_tf) throws IOException
+	/**if the list exist. add the new word to the end, else create a new list
+	 * @param word_pos **/
+	public void insertWordTF(String word_id, String page_id, int word_tf, Vector<Integer> word_pos, boolean isBody) throws IOException
 	{
 		//System.out.println(word_id + ": (" + page_id + "," + word_tf + ")");	
-		if(wordTF.getEntry(word_id) != null)
+		if(isBody)
 		{
-			Vector<Posting> postingList = (Vector<Posting>) wordTF.getEntry(word_id);
-			postingList.add(new Posting(page_id,word_tf));
-			wordTF.addEntry(word_id, postingList);
-			//((Vector<Posting>) wordTF.getEntry(word_id)).add(new Posting(page_id,word_tf));
+			if(bodyWord.getEntry(word_id) != null)
+			{
+				Vector<Posting> postingList = (Vector<Posting>) bodyWord.getEntry(word_id);
+				postingList.add(new Posting(page_id,word_tf,word_pos));
+				bodyWord.addEntry(word_id, postingList);
+				//((Vector<Posting>) wordTF.getEntry(word_id)).add(new Posting(page_id,word_tf));
+			}
+			else
+			{
+				Vector<Posting> postingList = new Vector<Posting>();
+				postingList.add(new Posting(page_id,word_tf,word_pos));
+				bodyWord.addEntry(word_id, postingList);
+			}
 		}
 		else
 		{
-			Vector<Posting> postingList = new Vector<Posting>();
-			postingList.add(new Posting(page_id,word_tf));
-			wordTF.addEntry(word_id, postingList);
+			if(titleWord.getEntry(word_id) != null)
+			{
+				Vector<Posting> postingList = (Vector<Posting>) titleWord.getEntry(word_id);
+				postingList.add(new Posting(page_id,word_tf,word_pos));
+				titleWord.addEntry(word_id, postingList);
+				//((Vector<Posting>) wordTF.getEntry(word_id)).add(new Posting(page_id,word_tf));
+			}
+			else
+			{
+				Vector<Posting> postingList = new Vector<Posting>();
+				postingList.add(new Posting(page_id,word_tf,word_pos));
+				titleWord.addEntry(word_id, postingList);
+			}
 		}
 
 	}
@@ -118,13 +143,29 @@ public class Word {
 		
 	}
 	
-	/** the main function for this class
-	 *  record the term_freq table, word_id table, word_inverted table**/
-	public void indexWordInfo(String page_id, String url) throws ParserException, IOException
+	public void build(String page_id, String url, boolean isBody) throws ParserException, IOException
 	{
-		Vector<String> words = Indexer.extractWords(url);
-		pageSize = words.size();
-		HashMap<String, Integer> temp = new HashMap<String, Integer>();
+		Vector<String> words = new Vector<String>();
+		if(isBody)
+		{
+			words = Indexer.extractWords(url);
+			pageSize = words.size();
+			/*
+			for(String i:words)
+				System.out.print(i + " ");
+			System.out.println("==================================");*/
+		}
+		else
+		{
+			String title = Indexer.extractTitle(url);
+	        String[] temp = title.split("\\W+");
+
+			for(int i = 0; i < temp.length; i++)
+				words.add(temp[i].toLowerCase());
+		}
+		
+		HashMap<String, Integer> word_tf = new HashMap<String, Integer>();
+		HashMap<String, Vector<Integer> > word_pos = new HashMap<String, Vector<Integer> >();
 		for(int i = 0; i < words.size(); i++)
 		{
 			/**
@@ -143,27 +184,47 @@ public class Word {
 			 * update the corresponding term frequency
 			 * and insert to the inverted talbe if it is the first time.
 			 */
+			
 			int tf;
-			if(temp.get(word_id) == null)
+			Vector<Integer> pos;
+			if(word_tf.get(word_id) == null)
 			{
 				tf = 1;
+				pos = new Vector<Integer>();
+				pos.add(i);
 				insertInvertedWord(page_id, word_id);
 			}
 			else
-				tf = temp.get(word_id) + 1;
+			{
+				tf = word_tf.get(word_id) + 1;
+				pos = word_pos.get(word_id);
+				pos.add(i);
+			}
 			
-			temp.put(word_id, tf);
+			word_tf.put(word_id, tf);
+			word_pos.put(word_id, pos);
 		}
 		
 		/**
 		 * insert the result above to term frequency table
 		 * */
-		Iterator it = temp.entrySet().iterator();
+		Iterator it = word_tf.entrySet().iterator();
 	    while (it.hasNext()) {
 	        Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();
-	        insertWordTF(pairs.getKey(), page_id, pairs.getValue());
+	        insertWordTF(pairs.getKey(), page_id, pairs.getValue(), word_pos.get(pairs.getKey()), isBody);
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
+	}
+	
+	/** the main function for this class
+	 *  record the term_freq table, word_id table, word_inverted table**/
+	public void indexWordInfo(String page_id, String url) throws ParserException, IOException
+	{
+		//body
+		build(page_id, url, true);
+		
+		//title
+		build(page_id, url, false);
 	}
 	
 	public int getPageSize()
