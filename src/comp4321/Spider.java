@@ -145,14 +145,14 @@ public class Spider {
 		spider.indexing(startUrl, maxPage);
 		
 		/** You can uncomment the following codes to see the outputs **/
-		/*
+		
 		DataStruc wordID = new DataStruc(recman,"wordID");
 		DataStruc wordTF = new DataStruc(recman,"wordTF");
 		DataStruc invertedWord = new DataStruc(recman, "invertedWord");
 		DataStruc word = new DataStruc(recman,"word");
 		DataStruc pageInfo = new DataStruc(recman, "pageInfo");
 		DataStruc childLink = new DataStruc(recman,"childLink");
-		*/
+		
 		/**print word_id -> word**/
 		/*
 		HTree hashtable = word.getHash();
@@ -184,6 +184,8 @@ public class Spider {
 		while( (keyword=(String)iter.next()) != null)
 		{
 			Vector<Posting> temp = (Vector<Posting>) hashtable.get(keyword);
+			HTree wordtemp = word.getHash();
+			keyword = (String) wordtemp.get(keyword);
 			System.out.print(keyword + ":");
 			for(Posting i: temp)
 				System.out.print("(" + i.page_id + ", " + i.freq + ") " );

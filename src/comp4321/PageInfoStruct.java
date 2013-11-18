@@ -79,6 +79,9 @@ public class PageInfoStruct implements Serializable{
 		//HtmlPage htmlPage = new HtmlPage(parser);
 		//System.out.println((htmlPage.getTitle()));
 		Node node = (Node)parser.extractAllNodesThatMatch(new TagNameFilter ("title")).elementAt(0);
-		return node.toPlainTextString();
+		if(node != null)
+			return node.toPlainTextString();
+		else
+			return null;
 	}
 }

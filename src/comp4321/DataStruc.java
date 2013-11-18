@@ -28,6 +28,8 @@ public class DataStruc {
 	
 	public Object getEntry(String key) throws IOException
 	{
+		if(key == null)
+			return null;
 		// return key's content from the hashtable, it may be null
 		return hashtable.get(key);
 	}
