@@ -9,14 +9,17 @@ import IRUtilities.Porter;
 
 public class StopStem {
 
-	Porter porter;
+	static Porter porter;
 	static Vector<String> stopWords = new Vector<String>();
-	public StopStem(){
+	
+	static
+	{
 		porter = new Porter();
 		readStopWords(stopWords);
 	}
 	
-	private void readStopWords(Vector<String> stopWords) {
+	
+	private static void readStopWords(Vector<String> stopWords) {
 		File f = new File("stopwords.txt");
     	if(!f.exists())
     	{
@@ -43,12 +46,12 @@ public class StopStem {
 	 * @param s
 	 * @return
 	 */
-	String getStem(String s)
+	static String getStem(String s)
 	{
 		return porter.stripAffixes(s);
 	}
 	
-	private boolean isNumeric(String str)  
+	private static boolean isNumeric(String str)  
 	{  
 	  try  
 	  {  
@@ -61,12 +64,12 @@ public class StopStem {
 	  return true;  
 	}
 	
-	private boolean isStopword(String s)
+	private static boolean isStopword(String s)
 	{
 		return stopWords.contains(s);
 	}
 	
-	String processing(String s)
+	static String processing(String s)
 	{
 		if(isNumeric(s) || isStopword(s))
 			return null;

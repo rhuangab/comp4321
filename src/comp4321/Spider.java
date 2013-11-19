@@ -76,6 +76,22 @@ public class Spider {
 	}
 	
 	/**
+	 * Add by Min, avoid multiple indexing
+	 * @param processed
+	 * @throws IOException
+	 */
+	private void initialProcessed(Queue<String> processed) throws IOException
+	{
+		HTree hashtable = pageID.getHash();
+		FastIterator iter = hashtable.keys();
+		String keyword = null;
+		while( (keyword=(String)iter.next()) != null)
+		{
+			String temp = (String) hashtable.get(keyword);
+			processed.add(temp);
+		}
+	}
+	/**
 	 * @Param url, maxPage
 	 * @return
 	 * Start from url, traverse all appeared urls until no pages left or the number of visited pages reach maxPage
@@ -86,6 +102,8 @@ public class Spider {
 		Queue<String> cands = new LinkedList<String>();
 		Queue<String> processed = new LinkedList<String>();
 		
+		initialProcessed(processed);
+		
 		cands.add(url);
 		
 		while(cands.size() != 0 && processed.size() < maxPage)
@@ -95,7 +113,6 @@ public class Spider {
 			// if the file is already processed, continue
 			if(processed.contains(indexURL))
 				continue;
-			
 			
 			String page_id = insertPage(indexURL);
 			
@@ -135,7 +152,7 @@ public class Spider {
 		String db = "comp4321";
 		String startUrl = "http://www.cse.ust.hk/";
 		
-		final int maxPage = 1;
+		final int maxPage = 10;
 		
 		long t1 = System.currentTimeMillis();
 		
@@ -177,7 +194,7 @@ public class Spider {
 		}*/
 		
 		/**print word_id -> list(page_id, term_freq, postion)**/
-		/*
+		
 		HTree hashtable = bodyWord.getHash();
 		System.out.println("==========================body=========================");
 		FastIterator iter = hashtable.keys();
@@ -186,8 +203,9 @@ public class Spider {
 		{
 			Vector<Posting> temp = (Vector<Posting>) hashtable.get(keyword);
 			HTree wordtemp = word.getHash();
+			System.out.print(keyword + "(");
 			keyword = (String) wordtemp.get(keyword);
-			System.out.print(keyword + ":");
+			System.out.print(keyword + "):");
 			for(Posting i: temp)
 			{
 				System.out.print("(" + i.page_id + ", " + i.freq + ", <" );
@@ -198,7 +216,7 @@ public class Spider {
 			}
 			
 			System.out.println();
-		}*/
+		}
 		/*
 		hashtable = titleWord.getHash();
 		System.out.println("==========================title=========================");
@@ -253,12 +271,19 @@ public class Spider {
 				
 		}*/
 		
+		/* demo for term weight
+		TermWeight termweight= new TermWeight(recman);
+		System.out.println("hong: " + termweight.getWeight("0006", "00000153", true));
+		*/
+		
 		spider.finalize();
 		
 		long t2 = System.currentTimeMillis();
 		
 		System.out.println("Total Time : " + (t2 - t1)/1000.0 + " Seconds");
-				
+		
+		
+		
 	}
 	
 }

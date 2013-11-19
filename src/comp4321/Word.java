@@ -33,7 +33,6 @@ public class Word {
 	private RecordManager recman;
 	int wordCount;
 	private int pageSize;
-	private StopStem stopstem;
 	
 	/**constructor
 	 * **/
@@ -46,14 +45,13 @@ public class Word {
 		invertedWord = new DataStruc(recman, "invertedWord");
 		word = new DataStruc(recman, "word");
 		wordCount = wordID.getSize();
-		stopstem = new StopStem();
 	}
 	
 	/**insert a new word**/
 	public String insertWord(String newWord) throws IOException
 	{
 		String temp = newWord;
-		newWord = stopstem.processing(newWord);
+		newWord = StopStem.processing(newWord);
 		//System.out.println(temp + " " + newWord);
 		
 		if(newWord == null || newWord =="")
