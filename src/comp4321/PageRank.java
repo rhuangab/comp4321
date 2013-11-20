@@ -11,6 +11,7 @@ import jdbm.htree.HTree;
 public class PageRank {
 	
 	private RecordManager recman;
+	//private DataStruc pageID;
 	private DataStruc parentLink;
 	private DataStruc childLink;
 	private DataStruc hubWeight;
@@ -20,6 +21,7 @@ public class PageRank {
 	public PageRank(RecordManager _recman) throws IOException 
 	{
 		recman = _recman;
+		//pageID = new DataStruc(recman, "pageID");
 		parentLink = new DataStruc(recman, "parentLink");
 		childLink = new DataStruc(recman, "childLink");
 		hubWeight = new DataStruc(recman, "hubWeight");
@@ -90,58 +92,93 @@ public class PageRank {
 		// variable declaration
 		Hashtable<String, Object> hubPrev = new Hashtable<String, Object>();
 		Vector<String> oneVector;
-		int oneWeight;
+		double oneWeight;
+		double totalHub;
+		double totalAuth;
+		double totalHubPrev;
+		double totalAuthPrev;
 		FastIterator iter;
 		String keyword = null;		
 		HTree hubHash;
 		HTree authHash;		
 		
 		// initialize all the weights with 1
-		iter = childLink.getHash().keys();
+		totalHub = 0;
+		totalAuth = 0;
+		//iter = pageID.getHash().keys();
+		iter = parentLink.getHash().keys();
 		while( (keyword=(String)iter.next()) != null)
 		{
-			hubWeight.addEntry(keyword, 1);
-			authWeight.addEntry(keyword, 1);
+			hubWeight.addEntry(keyword, 1.0);
+			authWeight.addEntry(keyword, 1.0);
+			totalHub += 1.0 * 1.0;
+			totalAuth += 1.0 * 1.0;
 		}
+		System.out.println("Intialization");
+		printHubAuth();		
 		
  		hubHash = hubWeight.getHash();
  		authHash = authWeight.getHash();
-		
-		// iteratively compute the weights
+ 		
+ 		//System.out.println(hubHash.keys()==authHash.keys());
+ 		
+ 		// iteratively compute the weights
 		for(int i = 0; i < iterNum; i++)
 		{
-			// store the previous state of hub
+			// store the previous state of hub and authority
 			iter = hubHash.keys();
 			while( (keyword=(String)iter.next()) != null)
 				hubPrev.put(keyword, hubHash.get(keyword));
+	 		totalHubPrev = Math.sqrt(totalHub);
+	 		totalAuthPrev = Math.sqrt(totalAuth);
 			
-			// compute hubs from previous authWeight
+			// compute hubs from normalized previous authWeight, hubWeight
+	 		totalHub = 0;
 			iter = hubHash.keys();
+	 		//iter = pageID.getHash().keys();
 			while( (keyword=(String)iter.next()) != null)
 			{
 				oneVector = (Vector<String>) childLink.getEntry(keyword);
 				oneWeight = 0;
 				for(String oneId: oneVector) 
-					oneWeight += (int)authHash.get(oneId);
+					oneWeight += (double)authHash.get(oneId);
+				oneWeight /= totalHubPrev;
+				totalHub += oneWeight * oneWeight;
 				hubWeight.addEntry(keyword, oneWeight);
 			}
 			
 			// System.out.println(hubHash==hubWeight.getHash());
 			
 			// compute authorities
+			totalAuth = 0;
 			iter = authHash.keys();
 			while( (keyword=(String)iter.next()) != null)
 			{
 				oneVector = (Vector<String>) parentLink.getEntry(keyword);
 				oneWeight = 0;
 				for(String oneId: oneVector)
-					oneWeight += (int)hubPrev.get(oneId);
+					oneWeight += (double)hubPrev.get(oneId);
+				oneWeight /= totalAuthPrev;
+				totalAuth += oneWeight * oneWeight;
 				authWeight.addEntry(keyword, oneWeight);
 			}
 			
 			System.out.println("Iteration: "+i);
 			printHubAuth();
 		}
+		
+		// normalize hub and authority weights
+		totalHubPrev = Math.sqrt(totalHub);
+ 		totalAuthPrev = Math.sqrt(totalAuth);
+ 		iter = parentLink.getHash().keys();
+ 		while( (keyword=(String)iter.next()) != null)
+		{
+			oneWeight = (double) hubWeight.getEntry(keyword);
+			hubWeight.addEntry(keyword, oneWeight/totalHubPrev);
+			oneWeight = (double) authWeight.getEntry(keyword);
+			authWeight.addEntry(keyword, oneWeight/totalAuthPrev);
+		}
+ 		printHubAuth();
 	}
 	
 	/**

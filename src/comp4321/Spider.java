@@ -119,8 +119,8 @@ public class Spider {
 			
 			// if the file is already processed, continue
 			if(processed.contains(indexURL) 													// already processed
-					&& pageInfo.getLastModification(indexURL)!=0 								// modification date valid
-					&& pageInfo.getLastModification(indexURL) >= onePage.getLastModification())	// modification date up to date
+					&& pageInfo.getLastModificationLong(indexURL)!=0 								// modification date valid
+					&& pageInfo.getLastModificationLong(indexURL) >= onePage.getLastModificationLong())	// modification date up to date
 				continue;
 			
 			//if(cands.contains(indexURL)) continue;
@@ -157,6 +157,8 @@ public class Spider {
 			if(!processed.contains(indexURL)) processed.add(indexURL);
 		
 		}
+		
+		pageRank.computeHubAuth(3);
 	}
 	
 	public static void main(String[] arg) throws IOException, ParserException
