@@ -58,10 +58,17 @@ public class PageInfoStruct implements Serializable{
 			m_size = hc.getContentLength();
 
 	}
-
-	public long getLastModification()
+	
+	public long getLastModificationLong()
 	{
 		return m_lastModification;
+	}
+
+	public Date getLastModification()
+	{
+		if( m_lastModification == 0 ) return null;
+		Date date = new Date(m_lastModification);
+		return date;
 	}
 	
 	public long getPageSize()

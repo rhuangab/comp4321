@@ -37,12 +37,12 @@ public class PageInfo {
 		}
 	}
 	
-	public long getLastModification(String url) throws IOException
+	public long getLastModificationLong(String url) throws IOException
 	{
 		String page_id = (String)pageId.getEntry(url);
 		PageInfoStruct pi = (PageInfoStruct) pageInfo.getEntry(page_id);
 		if(pi != null)
-			return pi.getLastModification();
+			return pi.getLastModificationLong();
 		else
 			return 0;
 	}
