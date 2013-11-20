@@ -47,7 +47,7 @@ public class TestProgram {
 	
 	public void print() throws IOException
 	{
-	  PrintWriter pw = new PrintWriter("spider_result.txt");
+		PrintWriter pw = new PrintWriter("spider_result.txt");
 		FastIterator keys = pageID.getIterator();
 		String url = null;
 		while((url = (String) keys.next()) != null) 

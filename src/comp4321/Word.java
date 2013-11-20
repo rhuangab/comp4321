@@ -42,7 +42,7 @@ public class Word {
 	private DataStruc word;
 	private RecordManager recman;
 	int wordCount;
-	private int pageSize;
+	private long pageSize;
 	
 	/**constructor
 	 * **/
@@ -248,7 +248,7 @@ public class Word {
 		build(page_id, url, false);
 	}
 	
-	public int getPageSize()
+	public long getPageSize()
 	{
 		return pageSize;
 	}

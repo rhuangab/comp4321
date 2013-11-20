@@ -29,11 +29,19 @@ public class Indexer {
 		word = new Word(recman);
 	}
 	
-	public void indexNewPage(String page_id, String url) throws ParserException, IOException
+	/**
+	 * index words, insert pageInfoStruct instance and adjust page_id and page_size
+	 * 
+	 * @param page_id
+	 * @param url
+	 * @param new_page
+	 * @throws ParserException
+	 * @throws IOException
+	 */
+	public void indexNewPage(String page_id, String url, PageInfoStruct new_page) throws ParserException, IOException
 	{
-		/**the only functions you need to call in order to index information**/
 		word.indexWordInfo(page_id, url);
-		pageInfo.insertElement(page_id, url,word.getPageSize());
+		pageInfo.insertElement(page_id, new_page, word.getPageSize());
 	}
 	
 	/**

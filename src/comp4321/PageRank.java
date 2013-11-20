@@ -43,7 +43,7 @@ public class PageRank {
 			{
 				parents = new Vector<String>();							// create new Vector if this child doesn't have an entry.
 			}else{
-				System.out.println(parentLink.getEntry(oneChild));
+				//System.out.println(parentLink.getEntry(oneChild));
 				parents = (Vector<String>) parentLink.getEntry(oneChild);
 				if(parents.contains(page_id)) continue;					// if it already has this parent, do nothing
 			}
@@ -68,6 +68,9 @@ public class PageRank {
 		}else{
 			children = (Vector<String>) childLink.getEntry(page_id);
 			children.addAll(child_ids);
+			Collection noDup = new LinkedHashSet(children);
+			children.clear();
+			children.addAll(noDup);
 		}
 		childLink.addEntry(page_id, children);
 	}

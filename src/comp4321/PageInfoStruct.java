@@ -19,43 +19,52 @@ public class PageInfoStruct implements Serializable{
 	private String m_url;
 	private String m_pageId;
 	private String m_title;
-	private Date m_lastModification;
-	private int m_size;
+	private long m_lastModification;
+	private long m_size;
 
-	public PageInfoStruct(String url, String pageId, int pageSize) throws ParserException, IOException
+	public PageInfoStruct(String url, String pageId) throws ParserException, IOException
 	{
-	  m_url = url;
+		m_url = url;
 		m_pageId = pageId;
-		m_size = pageSize;
+		//m_size = pageSize;
+		initialize();
+	}
+	
+	public PageInfoStruct(String url) throws ParserException, IOException
+	{
+		m_url = url;
+		m_pageId = null;
+		m_size = 0;
 		initialize();
 	}
 	
 	public void initialize() throws ParserException, IOException
- {
+	{
 		m_title = Indexer.extractTitle(m_url);
 		
 		//set up a URL connection to retrieve the page information
 		URLConnection hc;
 		URL url = new URL(m_url);
 		hc = url.openConnection();
-		long date = hc.getLastModified();
+		m_lastModification = hc.getLastModified();
+		
 		//If the page does not specify the last modification data, we use the sending data of the resources that URL referenced
-		if (date == 0)
-			date = hc.getDate();
-		m_lastModification = new Date(date);
+		if (hc.getLastModified() == 0)
+			m_lastModification = hc.getDate();
+		
 		// if the content length is unknown, which return -1, we use the length of
 		// the extractedWords.
-		if (hc.getContentLength() >= 0)
+		if (hc.getContentLengthLong() > 0)
 			m_size = hc.getContentLength();
 
 	}
 
-	public Date getLastModification()
+	public long getLastModification()
 	{
 		return m_lastModification;
 	}
 	
-	public int getPageSize()
+	public long getPageSize()
 	{
 		return m_size;
 	}
@@ -70,5 +79,30 @@ public class PageInfoStruct implements Serializable{
 		return m_url;
 	}
 	
+	public String getPageId()
+	{
+		return m_pageId;
+	}
+	
+	public boolean setPageId(String page_id)
+	{
+		if(m_pageId == null || m_pageId == page_id)
+		{
+			m_pageId = page_id;
+			return true;
+		}else{
+			return false;			
+		}
+	}
+	
+	public boolean setPageSize(long page_size)
+	{
+		if(m_size <= 0)
+		{
+			m_size = page_size;
+			return true;
+		}
+		return false;
+	}
 
 }

@@ -23,6 +23,7 @@ public class Spider {
 	private DataStruc pageID;
 	private int pageCount;
 	private static PageRank pageRank;
+	private static PageInfo pageInfo;
 	
 	/**
 	 * constructor
@@ -37,6 +38,7 @@ public class Spider {
 		pageID = new DataStruc(recman,"pageID");
 		pageCount = pageID.getSize();
 		pageRank = new PageRank(recman);
+		pageInfo = new PageInfo(recman);
 	}
 	
 	public void finalize() throws IOException
@@ -95,12 +97,14 @@ public class Spider {
 	 * @Param url, maxPage
 	 * @return
 	 * Start from url, traverse all appeared urls until no pages left or the number of visited pages reach maxPage
+	 * Notes: if out of date, would re-index, but not added to processed queue
 	 */
 	public void indexing(String url, int maxPage) throws IOException, ParserException
 	{
 		// Queue of to be processed and processed urls.
 		Queue<String> cands = new LinkedList<String>();
 		Queue<String> processed = new LinkedList<String>();
+		PageInfoStruct onePage;
 		
 		initialProcessed(processed);
 		
@@ -110,15 +114,23 @@ public class Spider {
 		{
 			String indexURL = cands.remove();
 			
+			// create a new PageInfoStruct instance for this URL
+			onePage = new PageInfoStruct(indexURL);
+			
 			// if the file is already processed, continue
-			if(processed.contains(indexURL))
+			if(processed.contains(indexURL) 													// already processed
+					&& pageInfo.getLastModification(indexURL)!=0 								// modification date valid
+					&& pageInfo.getLastModification(indexURL) >= onePage.getLastModification())	// modification date up to date
 				continue;
+			
+			//if(cands.contains(indexURL)) continue;
 			
 			String page_id = insertPage(indexURL);
 			
 			//System.out.println("indexing "+ page_id);
 			//System.out.println("before"+cands.size());
-			indexer.indexNewPage(page_id, indexURL);
+			//indexer.indexNewPage(page_id, indexURL);
+			indexer.indexNewPage(page_id, indexURL, onePage);
 			
 			// For all children links, add to the candidates, insertPage
 			Vector<String> links_dup = indexer.extractLinks(indexURL);
@@ -139,10 +151,10 @@ public class Spider {
 			}
 			
 			pageRank.addChildLink(page_id, ids);
-			//pageRank.addParentLink(page_id, ids);
+			pageRank.addParentLink(page_id, ids);
 			
 			//System.out.println("after"+cands.size());
-			processed.add(url);
+			if(!processed.contains(indexURL)) processed.add(indexURL);
 		
 		}
 	}
@@ -169,8 +181,26 @@ public class Spider {
 		DataStruc titleWord = new DataStruc(recman,"titleWord");
 		DataStruc invertedBodyWord = new DataStruc(recman, "invertedBodyWord");
 		DataStruc word = new DataStruc(recman,"word");
+		DataStruc pageId = new DataStruc(recman,"pageID");
 		DataStruc pageInfo = new DataStruc(recman, "pageInfo");
 		DataStruc childLink = new DataStruc(recman,"childLink");
+		DataStruc parentLink = new DataStruc(recman, "parentLink");
+		
+		HTree hashtable;
+		FastIterator iter;
+		String keyword;
+		
+		/**print page -> page_id**/
+		
+		hashtable = pageId.getHash();
+		iter = hashtable.keys();
+		keyword = null;
+		while( (keyword=(String)iter.next()) != null)
+		{
+			String temp = (String) hashtable.get(keyword);
+			System.out.println(keyword + " : " + temp);
+		}
+		
 		
 		/**print word_id -> word**/
 		/*
@@ -195,7 +225,7 @@ public class Spider {
 		}*/
 		
 		/**print word_id -> list(page_id, term_freq, postion)**/
-		
+		/*
 		HTree hashtable = bodyWord.getHash();
 		System.out.println("==========================body=========================");
 		FastIterator iter = hashtable.keys();
@@ -217,7 +247,7 @@ public class Spider {
 			}
 			
 			System.out.println();
-		}
+		}*/
 		/*
 		hashtable = titleWord.getHash();
 		System.out.println("==========================title=========================");
@@ -236,7 +266,7 @@ public class Spider {
 		}*/
 		
 		/**print page_id->list(word_id)**/
-		
+		/*
 		hashtable = invertedBodyWord.getHash();
 		iter = hashtable.keys();
 		keyword = null;
@@ -251,8 +281,8 @@ public class Spider {
 			}
 			
 			System.out.println();
-		}
-		
+		}*/
+	
 		/** print child_link **/
 		
 		hashtable = childLink.getHash();			
@@ -267,6 +297,24 @@ public class Spider {
 			{
 				PageInfoStruct pis = (PageInfoStruct) pageInfo.getEntry(temp.elementAt(i));
 				System.out.println("Child" + (i+1) +": "+pis.getURL());
+			}
+				
+		}
+		
+		/** print parent_link **/
+		
+		hashtable = parentLink.getHash();			
+		iter = hashtable.keys();
+		keyword = null;
+		while( (keyword=(String)iter.next()) != null )
+		{
+			Vector<String> temp = (Vector<String>) hashtable.get(keyword);
+			
+			System.out.println("\n" + keyword +  " " + ((PageInfoStruct)pageInfo.getEntry(keyword)).getURL() + " " + temp.size() + ":");
+			for(int i=0;i<temp.size();i++)
+			{
+				PageInfoStruct pis = (PageInfoStruct) pageInfo.getEntry(temp.elementAt(i));
+				System.out.println("Parent" + (i+1) +": "+pis.getURL());
 			}
 				
 		}

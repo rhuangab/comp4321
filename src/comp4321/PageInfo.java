@@ -18,31 +18,33 @@ public class PageInfo {
 	
 	private DataStruc pageInfo;
 	private RecordManager recman;
+	private DataStruc pageId;
 	
 	public PageInfo(RecordManager _recman) throws IOException
 	{		
 		recman = _recman;
 		pageInfo = new DataStruc(recman,"pageInfo");
+		pageId = new DataStruc(recman,"pageID");
 	}
 	
-	/** Given page_id, insert the pageInfoStruct into hashtable. **/
-	public void insertElement(String page_id, String url, int pageSize) throws ParserException, IOException
+	/** Given PageInfoStruct object, insert into hashtable*/
+	public void insertElement(String page_id, PageInfoStruct new_page, long page_size) throws IOException
 	{
-		PageInfoStruct newPageInfo = new PageInfoStruct(url,page_id,pageSize);
-		if(pageInfo.getEntry(page_id) !=null)
+		new_page.setPageSize(page_size);				// set page_size if not set
+		if( new_page.setPageId(page_id) )				// set page_id if not set
 		{
-			pageInfo.addEntry(page_id, newPageInfo);
+			pageInfo.addEntry(page_id, new_page);		// add entry only if page_id is set successfully
 		}
-		pageInfo.addEntry(page_id, newPageInfo);
 	}
 	
-	public Date getLastModification(String page_id) throws IOException
+	public long getLastModification(String url) throws IOException
 	{
+		String page_id = (String)pageId.getEntry(url);
 		PageInfoStruct pi = (PageInfoStruct) pageInfo.getEntry(page_id);
 		if(pi != null)
 			return pi.getLastModification();
 		else
-			return null;
+			return 0;
 	}
 	
 	public DataStruc getName()
