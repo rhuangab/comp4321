@@ -150,6 +150,7 @@ public class Spider {
 	public static void main(String[] arg) throws IOException, ParserException
 	{
 		String db = "comp4321";
+		
 		String startUrl = "http://www.cse.ust.hk/";
 		
 		final int maxPage = 10;
@@ -166,7 +167,7 @@ public class Spider {
 		DataStruc wordID = new DataStruc(recman,"wordID");
 		DataStruc bodyWord = new DataStruc(recman,"bodyWord");
 		DataStruc titleWord = new DataStruc(recman,"titleWord");
-		DataStruc invertedWord = new DataStruc(recman, "invertedWord");
+		DataStruc invertedBodyWord = new DataStruc(recman, "invertedBodyWord");
 		DataStruc word = new DataStruc(recman,"word");
 		DataStruc pageInfo = new DataStruc(recman, "pageInfo");
 		DataStruc childLink = new DataStruc(recman,"childLink");
@@ -235,26 +236,25 @@ public class Spider {
 		}*/
 		
 		/**print page_id->list(word_id)**/
-		/*
-		HTree hashtable = invertedWord.getHash();
-		FastIterator iter = hashtable.keys();
-		String keyword = null;
+		
+		hashtable = invertedBodyWord.getHash();
+		iter = hashtable.keys();
+		keyword = null;
 		while( (keyword=(String)iter.next()) != null)
 		{
-			Vector<String> temp = (Vector<String>) hashtable.get(keyword);
-			System.out.print(keyword + " " + temp.size() + ":");
-			for(String i: temp)
+			Vector<InvertPosting> temp = (Vector<InvertPosting>) hashtable.get(keyword);
+			for(InvertPosting i: temp)
 			{
 				HTree wordtemp = word.getHash();
-				i = (String) wordtemp.get(i);
-				System.out.print("(" + i + ") " );
+				String w = (String) wordtemp.get(i.word_id);
+				System.out.print(keyword + ": (" + w + ", " + i.freq + ") " );
 			}
 			
 			System.out.println();
-		}*/
-	
+		}
+		
 		/** print child_link **/
-		/*
+		
 		hashtable = childLink.getHash();			
 		iter = hashtable.keys();
 		keyword = null;
@@ -262,19 +262,27 @@ public class Spider {
 		{
 			Vector<String> temp = (Vector<String>) hashtable.get(keyword);
 			
-			System.out.println("\n" + ((PageInfoStruct)pageInfo.getEntry(keyword)).getURL() + " " + temp.size() + ":");
+			System.out.println("\n" + keyword +  " " + ((PageInfoStruct)pageInfo.getEntry(keyword)).getURL() + " " + temp.size() + ":");
 			for(int i=0;i<temp.size();i++)
 			{
 				PageInfoStruct pis = (PageInfoStruct) pageInfo.getEntry(temp.elementAt(i));
 				System.out.println("Child" + (i+1) +": "+pis.getURL());
 			}
 				
-		}*/
+		}
 		
 		/* demo for term weight
 		TermWeight termweight= new TermWeight(recman);
 		System.out.println("hong: " + termweight.getWeight("0006", "00000153", true));
 		*/
+		
+		/* demo for similar page
+		SimilarPage similar = new SimilarPage(recman);
+		LinkedList<InvertPosting> result = similar.getTopWords("0006");
+		for(InvertPosting temp:result)
+		{
+			System.out.println("(" + temp.word_id + ", " +  temp.freq + ")");
+		}*/
 		
 		spider.finalize();
 		

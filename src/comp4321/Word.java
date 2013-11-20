@@ -23,12 +23,22 @@ class Posting implements Serializable {
 	}
 }
 
+class InvertPosting implements Serializable {
+	public String word_id;
+	public int freq;
+
+	InvertPosting(String id, int freq) {
+		this.word_id = id;
+		this.freq = freq;
+	}
+}
 
 public class Word {
 	private DataStruc wordID;
 	private DataStruc bodyWord;
 	private DataStruc titleWord;
-	private DataStruc invertedWord;
+	private DataStruc invertedBodyWord;
+	private DataStruc invertedTitleWord;
 	private DataStruc word;
 	private RecordManager recman;
 	int wordCount;
@@ -42,7 +52,8 @@ public class Word {
 		wordID = new DataStruc(recman,"wordID");
 		bodyWord = new DataStruc(recman,"bodyWord");
 		titleWord = new DataStruc(recman,"titleWord");
-		invertedWord = new DataStruc(recman, "invertedWord");
+		invertedBodyWord = new DataStruc(recman, "invertedBodyWord");
+		invertedTitleWord = new DataStruc(recman, "invertedTitleWord");
 		word = new DataStruc(recman, "word");
 		wordCount = wordID.getSize();
 	}
@@ -117,20 +128,32 @@ public class Word {
 	}
 	
 	/**if the list exist. add the new word to the end, else create a new list**/
-	public void insertInvertedWord(String page_id, String word) throws IOException
+	public void insertInvertedWord(String page_id, String word, int tf, boolean isBody) throws IOException
 	{
-		if(invertedWord.getEntry(page_id) != null)
+		Vector<InvertPosting> list;
+		DataStruc invertedFile;
+		if(isBody)
 		{
-			Vector<String> list = (Vector<String>) invertedWord.getEntry(page_id);
-			list.add(word);
-			invertedWord.addEntry(page_id, list);
+			list = (Vector<InvertPosting>) invertedBodyWord.getEntry(page_id);
+			invertedFile = invertedBodyWord;
+		}
+		else
+		{
+			list = (Vector<InvertPosting>) invertedTitleWord.getEntry(page_id);
+			invertedFile = invertedTitleWord;
+		}
+			
+		if(list != null)
+		{
+			list.add(new InvertPosting(word, tf));
+			invertedFile.addEntry(page_id, list);
 			//((Vector<String>) invertedWord.getEntry(page_id)).add(word);
 		}
 		else
 		{
-			Vector<String> temp = new Vector<String>();
-			temp.add(word);
-			invertedWord.addEntry(page_id, temp);
+			list = new Vector<InvertPosting>();
+			list.add(new InvertPosting(word, tf));
+			invertedFile.addEntry(page_id, list);
 		}
 		/*
 		System.out.print(page_id + ":");
@@ -190,7 +213,6 @@ public class Word {
 				tf = 1;
 				pos = new Vector<Integer>();
 				pos.add(i);
-				insertInvertedWord(page_id, word_id);
 			}
 			else
 			{
@@ -210,6 +232,7 @@ public class Word {
 	    while (it.hasNext()) {
 	        Map.Entry<String, Integer> pairs = (Map.Entry<String, Integer>)it.next();
 	        insertWordTF(pairs.getKey(), page_id, pairs.getValue(), word_pos.get(pairs.getKey()), isBody);
+			insertInvertedWord(page_id, pairs.getKey(), pairs.getValue(), isBody);
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	}
