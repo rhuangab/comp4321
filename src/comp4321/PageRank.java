@@ -202,6 +202,21 @@ public class PageRank {
 		
 	}
 	
+	double getPageRank (String page_id) throws IOException
+	{
+		return (double)pageRank.getEntry(page_id);
+	}
+	
+	int getHubWeight (String page_id) throws IOException
+	{
+		return (int)hubWeight.getEntry(page_id);
+	}
+	
+	int getAuthWeight (String page_id) throws IOException
+	{
+		return (int)authWeight.getEntry(page_id);
+	}
+	
 	public void printHubAuth() throws IOException
 	{
 		FastIterator iter;
