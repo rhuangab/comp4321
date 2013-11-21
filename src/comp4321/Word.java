@@ -23,16 +23,6 @@ class Posting implements Serializable {
 	}
 }
 
-class InvertPosting implements Serializable {
-	public String word_id;
-	public int freq;
-
-	InvertPosting(String id, int freq) {
-		this.word_id = id;
-		this.freq = freq;
-	}
-}
-
 public class Word {
 	private DataStruc wordID;
 	private DataStruc bodyWord;
