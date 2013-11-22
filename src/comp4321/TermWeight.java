@@ -40,7 +40,7 @@ public class TermWeight {
 				break;
 			}
 		}
-		System.out.print(tf+"\n");
+
 		int df = postingList.size();
 		
 		double idf = Math.log(pageInfo.getSize() * 1.0 / df) / Math.log(2);

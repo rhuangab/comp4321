@@ -12,17 +12,6 @@ import jdbm.RecordManager;
 import jdbm.RecordManagerFactory;
 import jdbm.htree.HTree;
 
-class Score{
-	public String page_id;
-	public double vsScore;
-	public double pageRank;
-	
-	public Score(String id, double vs, double pr){
-		page_id = id;
-		vsScore = vs;
-		pageRank = pr;
-	}
-}
 
 public class Query {
 
@@ -35,9 +24,9 @@ public class Query {
 	
 	private RecordManager recman;
 	
-	public Query(RecordManager _recman) throws IOException
+	public Query() throws IOException
 	{		
-		recman = _recman;
+		recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
 		DataStruc wordID = new DataStruc(recman,"wordID");
 		DataStruc bodyWord = new DataStruc(recman,"bodyWord");
 		DataStruc invertedBodyWord = new DataStruc(recman, "invertedBodyWord");
@@ -83,7 +72,7 @@ public class Query {
 	    
 	    return result;
 	}
-	
+	/*
 	public static void main(String[] arg) throws IOException, ParserException
 	{
 		String db = "comp4321";
@@ -95,5 +84,5 @@ public class Query {
 		{
 			System.out.println( i.page_id + " " + i.vsScore + " " + i.pageRank);
 		}
-	}
+	}*/
 }
