@@ -30,6 +30,9 @@ public class TermWeight {
 			hashtable = titleWord.getHash();
 		
 		Vector<Posting> postingList = (Vector<Posting>) hashtable.get(word);
+		if(postingList == null)
+			return 0;
+		
 		int tf = 0;
 		for(Posting p:postingList)
 		{
