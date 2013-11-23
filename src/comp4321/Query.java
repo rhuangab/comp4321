@@ -27,8 +27,9 @@ public class Query {
 	
 	public Query() throws IOException
 	{		
-		//recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
-		recman = RecordManagerFactory.createRecordManager("MyDatabase");
+		recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
+		//recman = RecordManagerFactory.createRecordManager("/Library/Tomcat/apache-tomcat-6.0.37/webapps/comp4321/database/MyDatabase");
+		//recman = RecordManagerFactory.createRecordManager("MyDatabase");
 		DataStruc wordID = new DataStruc(recman,"wordID");
 		DataStruc bodyWord = new DataStruc(recman,"bodyWord");
 		DataStruc invertedBodyWord = new DataStruc(recman, "invertedBodyWord");
