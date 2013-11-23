@@ -1,6 +1,7 @@
 package comp4321;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -27,6 +28,7 @@ public class Query {
 	public Query() throws IOException
 	{		
 		recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
+		//recman = RecordManagerFactory.createRecordManager("MyDatabase");
 		DataStruc wordID = new DataStruc(recman,"wordID");
 		DataStruc bodyWord = new DataStruc(recman,"bodyWord");
 		DataStruc invertedBodyWord = new DataStruc(recman, "invertedBodyWord");
@@ -70,19 +72,21 @@ public class Query {
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	    
+	    Collections.sort(result);
+	    
 	    return result;
 	}
 	/*
 	public static void main(String[] arg) throws IOException, ParserException
 	{
-		String db = "comp4321";
-		RecordManager recman = RecordManagerFactory.createRecordManager(db);
-		
-		Query r = new Query(recman);
-		Vector<Score> result = r.getScore("hong kong");
+
+		Query r = new Query();
+		Vector<Score> result = r.getScore("award");
 		for(Score i: result)
 		{
-			System.out.println( i.page_id + " " + i.vsScore + " " + i.pageRank);
+			System.out.println( i.page_id + " " + i.vsScore + " " + i.pageRank +  " " + i.overall);
 		}
+		
+		System.out.print(String.format("%.2f", 1.24342));
 	}*/
 }
