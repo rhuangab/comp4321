@@ -27,8 +27,8 @@ public class Query {
 	
 	public Query() throws IOException
 	{		
-		recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
-		//recman = RecordManagerFactory.createRecordManager("MyDatabase");
+		//recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
+		recman = RecordManagerFactory.createRecordManager("MyDatabase");
 		DataStruc wordID = new DataStruc(recman,"wordID");
 		DataStruc bodyWord = new DataStruc(recman,"bodyWord");
 		DataStruc invertedBodyWord = new DataStruc(recman, "invertedBodyWord");
@@ -48,10 +48,20 @@ public class Query {
 		for(int i = 0; i < word.length; i++)
 		{
 			word[i] = StopStem.processing(word[i]);
+			
+			if(word[i] == null || word[i] == "")
+				continue;
+			
 			//get wordid
 			String word_id = (String) wordIDHash.get(word[i]);
 			
+			if(word_id == null || word_id == "")
+				continue;
+			
 			Vector<Posting> list = (Vector<Posting>) bodyWordHash.get(word_id);
+			if(list == null)
+				return new Vector<Score>();
+			
 			for(Posting p:list)
 			{
 				String page_id = p.page_id;
@@ -76,17 +86,17 @@ public class Query {
 	    
 	    return result;
 	}
-	/*
+	
 	public static void main(String[] arg) throws IOException, ParserException
 	{
 
 		Query r = new Query();
-		Vector<Score> result = r.getScore("award");
+		Vector<Score> result = r.getScore("to");
 		for(Score i: result)
 		{
 			System.out.println( i.page_id + " " + i.vsScore + " " + i.pageRank +  " " + i.overall);
 		}
 		
 		System.out.print(String.format("%.2f", 1.24342));
-	}*/
+	}
 }
