@@ -11,8 +11,10 @@ import jdbm.RecordManagerFactory;
 public class ChangeFavorite {
 	private RecordManager recman;
 	private DataStruc favoriteTable;
+	
 	public ChangeFavorite() throws IOException {
-		recman = RecordManagerFactory.createRecordManager("/Library/Tomcat/apache-tomcat-6.0.37/webapps/comp4321/MyDatabase");
+		recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
+		//recman = RecordManagerFactory.createRecordManager("/Library/Tomcat/apache-tomcat-6.0.37/webapps/comp4321/MyDatabase");
 		//recman = RecordManagerFactory.createRecordManager("MyDatabase");
 		favoriteTable = new DataStruc(recman,"favoriteFromUsernameToPageIDList");
   }
@@ -45,7 +47,10 @@ public class ChangeFavorite {
 	
 	public Vector<String> getFavoriteList(String username) throws IOException
 	{
-		return (Vector<String>) favoriteTable.getEntry(username);
+		if(favoriteTable.getEntry(username) != null)
+			return (Vector<String>) favoriteTable.getEntry(username);
+		else 
+			return new Vector<String>();
 	}
 	
 	public void finalize() throws IOException
