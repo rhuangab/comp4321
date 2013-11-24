@@ -9,6 +9,7 @@ import java.util.Vector;
 
 import org.htmlparser.util.ParserException;
 
+import favorite.ChangeFavorite;
 import jdbm.RecordManager;
 import jdbm.RecordManagerFactory;
 import jdbm.htree.HTree;
@@ -23,6 +24,7 @@ public class Query {
 	HTree pageIDHash;
 	TermWeight termWeight;
 	PageRank PR;
+	ChangeFavorite cf;
 	
 	private RecordManager recman;
 	
@@ -44,9 +46,10 @@ public class Query {
 		invertedBodyWordHash = invertedBodyWord.getHash();
 		invertedTitleWordHash = invertedTitleWord.getHash();
 		termWeight = new TermWeight(recman);
+		cf = new ChangeFavorite();
 	}
 	
-	public Vector<Score> getScore(String query) throws IOException
+	public Vector<Score> getScore(String username, String query) throws IOException
 	{
 		HashMap<String, partialScore> vsScores = new HashMap<String, partialScore>();
 		
@@ -113,6 +116,8 @@ public class Query {
 	        double body = partialSum.body;
 	        double title = partialSum.title;
 	        
+	        boolean isFavorite = cf.isFavorite(username, page_id);
+	        
 	        //to approximate the document length
 	        if(body != 0)
 	        {
@@ -128,7 +133,7 @@ public class Query {
 		        title = title / titleLength;
 	        }
 	        
-	        result.add(new Score(page_id, body , title , PR.getPageRank(page_id)));
+	        result.add(new Score(page_id, body , title , PR.getPageRank(page_id), isFavorite));
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	    
@@ -142,10 +147,10 @@ public class Query {
 	{
 
 		Query r = new Query();
-		Vector<Score> result = r.getScore("home");
+		Vector<Score> result = r.getScore("Janie","home");
 		for(Score i: result)
 		{
-			System.out.println( i.page_id + " " + i.vsScoreBody + " " + i.vsScoreTitle + " " + i.pageRank +  " " + i.overall);
+			System.out.println( i.page_id + " " + i.vsScoreBody + " " + i.vsScoreTitle + " " + i.bonus + " " + i.pageRank +  " " + i.overall);
 		}
 		
 		System.out.print(String.format("%.2f", 1.24342));

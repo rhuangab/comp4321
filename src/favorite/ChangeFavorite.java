@@ -53,6 +53,13 @@ public class ChangeFavorite {
 			return new Vector<String>();
 	}
 	
+	public boolean isFavorite(String username, String page_id) throws IOException
+	{
+		Vector<String> favoriteList = getFavoriteList(username);
+
+		return favoriteList.contains(page_id);
+	}
+	
 	public void finalize() throws IOException
 	{
 		recman.commit();
