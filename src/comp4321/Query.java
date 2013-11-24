@@ -12,6 +12,7 @@ import java.util.Vector;
 import org.htmlparser.util.ParserException;
 
 import favorite.ChangeFavorite;
+import favorite.QueryHistory;
 import jdbm.RecordManager;
 import jdbm.RecordManagerFactory;
 import jdbm.htree.HTree;
@@ -32,8 +33,8 @@ public class Query {
 	
 	public Query() throws IOException
 	{		
-		//recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
-		recman = RecordManagerFactory.createRecordManager("MyDatabase");
+		recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
+		//recman = RecordManagerFactory.createRecordManager("/Library/Tomcat/apache-tomcat-6.0.37/webapps/comp4321/database/MyDatabase");
 		DataStruc wordID = new DataStruc(recman,"wordID");
 		DataStruc bodyWord = new DataStruc(recman,"bodyWord");
 		DataStruc titleWord = new DataStruc(recman,"bodyWord");
@@ -210,9 +211,12 @@ public class Query {
 
 	    long t2 = System.currentTimeMillis();
 	    
+	    info.query = query;
 	    info.time = (t2 - t1)/1000.0;
 	    info.numberOfResult = result.size();
 	    
+	    QueryHistory queryHistory = new QueryHistory();
+	    queryHistory.addQueryHistory(username, info);
 	    return result;
 	}
 	
@@ -221,7 +225,7 @@ public class Query {
 	{
 
 		Query r = new Query();
-		ResultInfo info = new ResultInfo(0,0);
+		ResultInfo info = new ResultInfo("", 0,0);
 		Vector<Score> result = r.getScore("Janie","  computer   science", info);
 		for(Score i: result)
 		{
