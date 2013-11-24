@@ -13,8 +13,8 @@ public class ChangeFavorite {
 	private DataStruc favoriteTable;
 	
 	public ChangeFavorite() throws IOException {
-		recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
-		//recman = RecordManagerFactory.createRecordManager("/Library/Tomcat/apache-tomcat-6.0.37/webapps/comp4321/MyDatabase");
+		//recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
+		recman = RecordManagerFactory.createRecordManager("/Library/Tomcat/apache-tomcat-6.0.37/webapps/comp4321/database/MyDatabase");
 		//recman = RecordManagerFactory.createRecordManager("MyDatabase");
 		favoriteTable = new DataStruc(recman,"favoriteFromUsernameToPageIDList");
   }
