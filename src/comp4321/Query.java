@@ -51,10 +51,11 @@ public class Query {
 		cf = new ChangeFavorite();
 	}
 	
-	public Vector<Score> getScore(String username, String query) throws IOException
+	public Vector<Score> getScore(String username, String query, ResultInfo info) throws IOException
 	{
 		HashMap<String, partialScore> vsScores = new HashMap<String, partialScore>();
 		
+		long t1 = System.currentTimeMillis();
 		// add vsScores with weights from boh words and phrases
 		String[] blocks = query.split("\"");
 		for(int j = 0; j<blocks.length; j++)
@@ -193,6 +194,11 @@ public class Query {
 	    }
 	    
 	    Collections.sort(result);
+
+	    long t2 = System.currentTimeMillis();
+	    
+	    info.time = (t2 - t1)/1000.0;
+	    info.numberOfResult = result.size();
 	    
 	    return result;
 	}
@@ -202,12 +208,13 @@ public class Query {
 	{
 
 		Query r = new Query();
-		Vector<Score> result = r.getScore("Janie","home");
+		ResultInfo info = new ResultInfo(0,0);
+		Vector<Score> result = r.getScore("Janie","computer science", info);
 		for(Score i: result)
 		{
 			System.out.println( i.page_id + " " + i.vsScoreBody + " " + i.vsScoreTitle + " " + i.bonus + " " + i.pageRank +  " " + i.overall);
 		}
 		
-		System.out.print(String.format("%.2f", 1.24342));
+		System.out.print(info.time);
 	}
 }
