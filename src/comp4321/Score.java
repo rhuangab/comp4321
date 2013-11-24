@@ -12,7 +12,7 @@ public class Score implements Comparable<Score>{
 		vsScoreBody = String.format("%.2f", vs_body);
 		vsScoreTitle = String.format("%.2f", vs_title);
 		pageRank = String.format("%.2f", pr);
-		double vs = vs_body + 1.5 * vs_title; 
+		double vs = vs_body + vs_title; 
 		overall = String.format("%.2f", vs * pr);
 
 	}

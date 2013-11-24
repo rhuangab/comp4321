@@ -95,9 +95,11 @@ public class Query {
 					{
 						partialScore = vsScores.get(page_id).title + partialScore;
 						//System.out.println(vsScores.get(page_id).title + " " + word_id + " " + partialScore);
+						double bodyScore = vsScores.get(page_id).body;
+						vsScores.put(page_id, new partialScore(bodyScore,partialScore));
 					}
-					double bodyScore = vsScores.get(page_id).body;
-					vsScores.put(page_id, new partialScore(bodyScore,partialScore));
+					else
+						vsScores.put(page_id, new partialScore(0,partialScore));
 				}
 			}
 		}
@@ -108,14 +110,25 @@ public class Query {
 	        Map.Entry<String, partialScore> pairs = (Map.Entry<String, partialScore>)it.next();
 	        String page_id = pairs.getKey();
 	        partialScore partialSum = pairs.getValue();
-
+	        double body = partialSum.body;
+	        double title = partialSum.title;
+	        
 	        //to approximate the document length
-	        Vector<InvertPosting> temp = (Vector<InvertPosting>) invertedBodyWordHash.get(page_id);
-	        double bodyLength =  Math.sqrt(Math.sqrt(temp.size()*1.0));
-	        temp = (Vector<InvertPosting>) invertedTitleWordHash.get(page_id);
-	        double titleLength =  Math.sqrt(Math.sqrt(temp.size()*1.0));
-
-	        result.add(new Score(page_id, partialSum.body / bodyLength, partialSum.title / titleLength, PR.getPageRank(page_id)));
+	        if(body != 0)
+	        {
+	        	Vector<InvertPosting> temp = (Vector<InvertPosting>) invertedBodyWordHash.get(page_id);
+	        	double bodyLength =  Math.sqrt(Math.sqrt(temp.size()*1.0));
+	        	body = body / bodyLength;
+	        }
+	        
+	        if(title != 0)
+	        {
+	        	Vector<InvertPosting> temp = (Vector<InvertPosting>) invertedTitleWordHash.get(page_id);
+		        double titleLength =  Math.sqrt(Math.sqrt(temp.size()*1.0));
+		        title = title / titleLength;
+	        }
+	        
+	        result.add(new Score(page_id, body , title , PR.getPageRank(page_id)));
 	        it.remove(); // avoids a ConcurrentModificationException
 	    }
 	    
@@ -129,7 +142,7 @@ public class Query {
 	{
 
 		Query r = new Query();
-		Vector<Score> result = r.getScore("Spitfire Grill");
+		Vector<Score> result = r.getScore("home");
 		for(Score i: result)
 		{
 			System.out.println( i.page_id + " " + i.vsScoreBody + " " + i.vsScoreTitle + " " + i.pageRank +  " " + i.overall);

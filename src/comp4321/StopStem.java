@@ -20,7 +20,7 @@ public class StopStem {
 	
 	
 	private static void readStopWords(Vector<String> stopWords) {
-		File f = new File("stopwords.txt");
+		File f = new File("C:\\Users\\XIE Min\\workspace\\comp4321\\stopwords.txt");
     	if(!f.exists())
     	{
     		System.out.println("Stopwords.txt missing.");

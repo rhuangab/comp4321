@@ -60,6 +60,7 @@ public class Spider {
 			return (String) pageID.getEntry(url);
 		String id = String.format("%04d", pageCount++);
 		pageID.addEntry(url, id);
+		System.out.println(url + " " + id);
 		return id;
 	}
 	
@@ -153,21 +154,24 @@ public class Spider {
 			pageRank.addChildLink(page_id, ids);
 			pageRank.addParentLink(page_id, ids);
 			
+
+			
 			//System.out.println("after"+cands.size());
 			if(!processed.contains(indexURL)) processed.add(indexURL);
 		
 		}
 		
 		pageRank.computeHubAuth(3);
+		pageRank.compPageRank(0.2, 10);
 	}
 	
 	public static void main(String[] arg) throws IOException, ParserException
 	{
-		String db = "comp4321";
+		String db = "MyDatabase";
 		
-		String startUrl = "http://www.cse.ust.hk/";
+		String startUrl = "http://www.cse.ust.hk/~ericzhao/COMP4321/TestPages/testpage.htm";
 		
-		final int maxPage = 10;
+		final int maxPage = 300;
 		
 		long t1 = System.currentTimeMillis();
 		
@@ -193,7 +197,7 @@ public class Spider {
 		String keyword;
 		
 		/**print page -> page_id**/
-		
+		/*
 		hashtable = pageId.getHash();
 		iter = hashtable.keys();
 		keyword = null;
@@ -201,7 +205,7 @@ public class Spider {
 		{
 			String temp = (String) hashtable.get(keyword);
 			System.out.println(keyword + " : " + temp);
-		}
+		}*/
 		
 		
 		/**print word_id -> word**/
@@ -216,16 +220,16 @@ public class Spider {
 		}*/
 		
 		/**print word -> word_id**/
-		/*
-		HTree hashtable = wordID.getHash();
-		FastIterator iter = hashtable.keys();
-		String keyword = null;
+		
+		hashtable = wordID.getHash();
+		iter = hashtable.keys();
+		keyword = null;
 		while( (keyword=(String)iter.next()) != null)
 		{
 			String temp = (String) hashtable.get(keyword);
 			System.out.println(keyword + " : " + temp);
-		}*/
-		
+		}
+		System.out.println(wordID.getSize());	
 		/**print word_id -> list(page_id, term_freq, postion)**/
 		/*
 		HTree hashtable = bodyWord.getHash();
@@ -286,7 +290,7 @@ public class Spider {
 		}*/
 	
 		/** print child_link **/
-		
+		/*
 		hashtable = childLink.getHash();			
 		iter = hashtable.keys();
 		keyword = null;
@@ -301,10 +305,10 @@ public class Spider {
 				System.out.println("Child" + (i+1) +": "+pis.getURL());
 			}
 				
-		}
+		}*/
 		
 		/** print parent_link **/
-		
+		/*
 		hashtable = parentLink.getHash();			
 		iter = hashtable.keys();
 		keyword = null;
@@ -320,7 +324,7 @@ public class Spider {
 			}
 				
 		}
-		
+		*/
 		/* demo for term weight
 		TermWeight termweight= new TermWeight(recman);
 		System.out.println("hong: " + termweight.getWeight("0006", "00000153", true));
