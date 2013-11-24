@@ -33,9 +33,9 @@ public class Query {
 	
 	public Query() throws IOException
 	{		
-		//recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
+		recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\database\\MyDatabase");
 		//recman = RecordManagerFactory.createRecordManager("/Library/Tomcat/apache-tomcat-6.0.37/webapps/comp4321/database/MyDatabase");
-		recman = RecordManagerFactory.createRecordManager("MyDatabase");
+		//recman = RecordManagerFactory.createRecordManager("MyDatabase");
 		DataStruc wordID = new DataStruc(recman,"wordID");
 		DataStruc bodyWord = new DataStruc(recman,"bodyWord");
 		DataStruc titleWord = new DataStruc(recman,"bodyWord");
@@ -60,6 +60,7 @@ public class Query {
 		
 		long t1 = System.currentTimeMillis();
 		
+		Vector<Score> tempResult = new Vector<Score>();
 		Vector<Score> result = new Vector<Score>();
 		
 		try
@@ -200,11 +201,21 @@ public class Query {
 			        title = title / titleLength;
 		        }
 		        
-		        result.add(new Score(page_id, body , title , PR.getPageRank(page_id), isFavorite));
+		        tempResult.add(new Score(page_id, body , title , PR.getPageRank(page_id), isFavorite));
 		        it.remove(); // avoids a ConcurrentModificationException
 		    }
 		    
-		    Collections.sort(result);
+		    Collections.sort(tempResult);
+		    
+		    for(int i = 0; i < tempResult.size() && i < 50; i++)
+		    {
+		    	Score score = tempResult.elementAt(i);
+		    	if(Double.parseDouble(score.overall) != 0.0)
+		    		result.add(score);
+		    	else
+		    		break;
+		    }
+		    
 		}
 		catch(Exception e)
 		{
