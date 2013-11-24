@@ -33,8 +33,9 @@ public class Query {
 	
 	public Query() throws IOException
 	{		
-		recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
+		//recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\MyDatabase");
 		//recman = RecordManagerFactory.createRecordManager("/Library/Tomcat/apache-tomcat-6.0.37/webapps/comp4321/database/MyDatabase");
+		recman = RecordManagerFactory.createRecordManager("MyDatabase");
 		DataStruc wordID = new DataStruc(recman,"wordID");
 		DataStruc bodyWord = new DataStruc(recman,"bodyWord");
 		DataStruc titleWord = new DataStruc(recman,"bodyWord");
@@ -226,12 +227,14 @@ public class Query {
 
 		Query r = new Query();
 		ResultInfo info = new ResultInfo("", 0,0);
-		Vector<Score> result = r.getScore("Janie","  computer   science", info);
+		Vector<Score> result = r.getScore("Janie","\"HONG KONG\"", info);
 		for(Score i: result)
 		{
 			System.out.println( i.page_id + " " + i.vsScoreBody + " " + i.vsScoreTitle + " " + i.bonus + " " + i.pageRank +  " " + i.overall);
 		}
 		
-		System.out.print(info.time);
+		//System.out.print(StopStem.processing("to"));
+		
+		
 	}
 }

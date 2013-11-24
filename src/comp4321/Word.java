@@ -55,8 +55,12 @@ public class Word {
 		newWord = StopStem.processing(newWord);
 		//System.out.println(temp + " " + newWord);
 		
-		if(newWord == null || newWord =="")
+		
+		if(newWord == null || newWord.equals(""))
 			return null;
+		
+		if(newWord.equals("to"))
+			System.out.println("df");
 		
 		if(wordID.getEntry(newWord) != null)
 			return (String) wordID.getEntry(newWord);
@@ -70,6 +74,10 @@ public class Word {
 	/**get word_id**/
 	public String getWordID(String word) throws IOException
 	{
+		word = StopStem.processing(word);
+		if(word == null || word.equals(""))
+			return null;
+		
 		if(wordID.getEntry(word) == null)
 			return null;
 		

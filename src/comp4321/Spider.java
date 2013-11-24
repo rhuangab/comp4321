@@ -209,18 +209,23 @@ public class Spider {
 		
 		
 		/**print word_id -> word**/
-		/*
-		HTree hashtable = word.getHash();
-		FastIterator iter = hashtable.keys();
-		String keyword = null;
+		int count = 0;
+		hashtable = word.getHash();
+		iter = hashtable.keys();
+		keyword = null;
 		while( (keyword=(String)iter.next()) != null)
 		{
-			String temp = (String) hashtable.get(keyword);
-			System.out.println(keyword + " : " + temp);
-		}*/
+			if(count >= 8000 && count <= 9000)
+			{
+				String temp = (String) hashtable.get(keyword);
+				System.out.println(keyword + " : " + temp);
+			}
+			count++;
+			
+		}
 		
 		/**print word -> word_id**/
-		
+		/*
 		hashtable = wordID.getHash();
 		iter = hashtable.keys();
 		keyword = null;
@@ -330,13 +335,13 @@ public class Spider {
 		System.out.println("hong: " + termweight.getWeight("0006", "00000153", true));
 		*/
 		
-		/* demo for similar page
+		// demo for similar page
 		SimilarPage similar = new SimilarPage(recman);
-		LinkedList<InvertPosting> result = similar.getTopWords("0006");
+		LinkedList<InvertPosting> result = similar.getTopWords("0243");
 		for(InvertPosting temp:result)
 		{
 			System.out.println("(" + temp.word_id + ", " +  temp.freq + ")");
-		}*/
+		}
 		
 		spider.finalize();
 		

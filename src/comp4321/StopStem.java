@@ -2,8 +2,11 @@ package comp4321;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.Scanner;
 import java.util.Vector;
+
+import org.htmlparser.util.ParserException;
 
 import IRUtilities.Porter;
 
@@ -72,9 +75,15 @@ public class StopStem {
 	static String processing(String s)
 	{
 		if(isNumeric(s) || isStopword(s))
-			return null;
+			return "";
 		else
 			return getStem(s);
 
+	}
+	
+	public static void main(String[] arg) throws IOException, ParserException
+	{
+
+		System.out.println(stopWords.contains("to"));
 	}
 }
