@@ -11,7 +11,7 @@ import jdbm.RecordManager;
 public class Phrase {
 
 	private RecordManager recman;
-	private String[] words;
+	private Vector<String> words;
 	private DataStruc pageInfo;
 	private DataStruc wordID;
 	private DataStruc invertedBodyWord;
@@ -22,6 +22,8 @@ public class Phrase {
 	private Hashtable<String, Integer> titleFreqs;			// <pageId, phraseFreq>
 	private Hashtable<String, Double> bodyWeight;			// <pageId, phraseWeight>
 	private Hashtable<String, Double> titleWeight;			// <pageId, phraseWeight>
+	
+	private boolean hasWeight; 
 		
 	public Phrase(RecordManager _recman, String _words) throws IOException
 	{
@@ -36,18 +38,24 @@ public class Phrase {
 		titleFreqs = new Hashtable<String, Integer>();
 		bodyWeight = new Hashtable<String, Double>();
 		titleWeight = new Hashtable<String, Double>();
-		words = _words.split(" ");
-		for(int i = 0; i<words.length; i++) 
+		words = new Vector<String>();
+		String[] tmp = _words.split(" ");
+		hasWeight = false;
+		for(int i = 0; i<tmp.length; i++) 
 		{
-			String wordStem = StopStem.processing(words[i]);
-			words[i] = (String) wordID.getEntry(wordStem);
+			String wordStem = StopStem.processing(tmp[i]);
+			if(wordStem == null || wordStem.equals("")) continue;
+			String tmpKey = (String) wordID.getEntry(wordStem);
+			if(tmpKey == null || tmpKey.equals("")) hasWeight = true; 
+			words.add(tmpKey);
 		}
-		compWeight();
-		System.out.println(_words);
+		if(!hasWeight) compWeight();
+		//System.out.println(_words);
 	}
 	
 	public Hashtable<String, Double> getWeight(boolean isBody)
 	{
+		
 		if(isBody) return bodyWeight;
 		else return titleWeight;
 	}
@@ -98,14 +106,18 @@ public class Phrase {
 		Vector<Vector<Posting>> posts = new Vector<Vector<Posting>>();
 		Vector<Integer> indices = new Vector<Integer>();
 		
-		// initialize posts with word posts
+		// initialize posts, putting postings of all words into same vector
 		Vector<Posting> vp;
 		for(String oneWord: words)
 		{
 			vp = (Vector<Posting>) invertedWord.getEntry(oneWord);
-			posts.add(vp);
-			if(vp == null) dfs.put(oneWord, 0);
-			else dfs.put(oneWord, vp.size());
+			if(vp == null) 
+			{
+				dfs.put(oneWord, 0);
+			}else{
+				posts.add(vp);
+				dfs.put(oneWord, vp.size());
+			}
 			indices.add(0);
 		}
 		
@@ -113,7 +125,7 @@ public class Phrase {
 		Hashtable<String, Vector<Posting>> occur = new Hashtable<String, Vector<Posting>>();
 		Vector<Posting> cnt;
 		String pageId;
-		for(Vector<Posting> onePosts: posts )
+		for(Vector<Posting> onePosts: posts )		// onePosts: posting list for one word
 		{
 			for(Posting onePost: onePosts)
 			{
@@ -122,8 +134,8 @@ public class Phrase {
 				else 
 				{
 					cnt = new Vector<Posting>();
-					cnt.add(onePost);
 				}
+				cnt.add(onePost);
 				occur.put(pageId, cnt);
 			}
 		}
@@ -136,11 +148,12 @@ public class Phrase {
 		{
 			tmpKey = e.nextElement();
 			tmpVec = occur.get(tmpKey);
-			if( tmpVec.size() == 3 ) 
+			if( tmpVec.size() == words.size() ) 
 			{
 				freq = findFreq(tmpVec);
 				freqs.put(tmpKey, freq);
-			}
+			}else
+				freqs.put(tmpKey, 0);
 		}
 		
 	}
@@ -171,7 +184,7 @@ public class Phrase {
 		Integer i2;
 		int i;
 		boolean flag;
-		for(;indices.elementAt(0) < positions.firstElement().size(); indices.setElementAt(0, indices.elementAt(0)+1))
+		for(;indices.elementAt(0) < positions.firstElement().size(); )
 		{
 			i = 0;
 			flag = false;
@@ -183,7 +196,11 @@ public class Phrase {
 				i1 = indices.elementAt(i);
 				i2 = indices.elementAt(i+1);
 				while( (i2 < v2.size()) && (v2.elementAt(i2) < v1.elementAt(i1)) ) i2++;
-				indices.setElementAt(i+1, i2);
+				indices.setElementAt(i2, i+1);
+				
+				if(i2 >= v2.size())
+					break;
+				
 				if(v2.elementAt(i2) == (v1.elementAt(i1)+1)) 
 					flag = true;
 				else 
@@ -191,6 +208,11 @@ public class Phrase {
 			}
 			
 			if(flag) freq++;
+			
+			int temp = indices.elementAt(0)+1;
+			
+			indices.setElementAt(temp, 0);
+
 		}
 		
 		
