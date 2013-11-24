@@ -114,8 +114,8 @@ public class PageRank {
 			totalHub += 1.0 * 1.0;
 			totalAuth += 1.0 * 1.0;
 		}
-		System.out.println("Intialization");
-		printHubAuth();		
+		//System.out.println("Intialization");
+		//printHubAuth();		
 		
  		hubHash = hubWeight.getHash();
  		authHash = authWeight.getHash();
@@ -163,8 +163,8 @@ public class PageRank {
 				authWeight.addEntry(keyword, oneWeight);
 			}
 			
-			System.out.println("Iteration: "+i);
-			printHubAuth();
+			//System.out.println("Iteration: "+i);
+			//printHubAuth();
 		}
 		
 		// normalize hub and authority weights
@@ -208,8 +208,8 @@ public class PageRank {
 		while( (keyword=(String)iter.next()) != null)
 			pageRank.addEntry(keyword, 1.0);
 		
-		System.out.println("After Initialization");
-		printPageRank();
+		//System.out.println("After Initialization");
+		//printPageRank();
 		
 		rankHash = pageRank.getHash();
 		
@@ -237,8 +237,10 @@ public class PageRank {
 			}
 			
 			System.out.println("Iteration: "+i);	
-			printPageRank();
+			//printPageRank();
 		}
+		
+		printPageRank();
 		
 	}
 	
