@@ -1,12 +1,16 @@
 package comp4321;
 
-public class ResultInfo {
+import java.io.Serializable;
+
+public class ResultInfo implements Serializable {
 	
+	public String query;
 	public double time;
 	public int numberOfResult;
 	
-	public ResultInfo(double t, int n)
+	public ResultInfo(String q, double t, int n)
 	{
+		query = q;
 		time = t;
 		this.numberOfResult = n;
 	}
