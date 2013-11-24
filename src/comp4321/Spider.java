@@ -161,8 +161,8 @@ public class Spider {
 		
 		}
 		
-		pageRank.computeHubAuth(3);
-		pageRank.compPageRank(0.2, 10);
+		//pageRank.computeHubAuth(3);
+		pageRank.compPageRank(0.85, 10);
 	}
 	
 	public static void main(String[] arg) throws IOException, ParserException
