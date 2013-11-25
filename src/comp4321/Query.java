@@ -33,9 +33,9 @@ public class Query {
 	
 	public Query() throws IOException
 	{		
-		recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\database\\MyDatabase");
+		//recman = RecordManagerFactory.createRecordManager("C:\\Program Files\\Apache Software Foundation\\Tomcat 8.0\\webapps\\COMP4321Beta1\\database\\MyDatabase");
 		//recman = RecordManagerFactory.createRecordManager("/Library/Tomcat/apache-tomcat-6.0.37/webapps/comp4321/database/MyDatabase");
-		//recman = RecordManagerFactory.createRecordManager("MyDatabase");
+		recman = RecordManagerFactory.createRecordManager("MyDatabase");
 		DataStruc wordID = new DataStruc(recman,"wordID");
 		DataStruc bodyWord = new DataStruc(recman,"bodyWord");
 		DataStruc titleWord = new DataStruc(recman,"bodyWord");
@@ -63,10 +63,9 @@ public class Query {
 		Vector<Score> tempResult = new Vector<Score>();
 		Vector<Score> result = new Vector<Score>();
 		
-		try
-		{
+
 			// add vsScores with weights from both words and phrases
-			String[] blocks = query.split("\"");
+			String[] blocks = query.split("[\"\']");
 			for(int j = 0; j<blocks.length; j++)
 			{
 				if( j%2 == 0)
@@ -139,9 +138,17 @@ public class Query {
 					if( bodyPhraseWeight != null)
 					{
 						Enumeration<String> e = bodyPhraseWeight.keys();
+						String page_id = "";
 						while(e.hasMoreElements())
 						{
-							String page_id = e.nextElement();
+							page_id = e.nextElement();
+					        
+							
+					        if(page_id.equals("0062"))
+					        {
+					        	System.out.print("");
+					        }
+					        
 							double partialScore = bodyPhraseWeight.get(page_id);
 							if(vsScores.get(page_id) != null)
 							{
@@ -152,6 +159,11 @@ public class Query {
 							else
 								vsScores.put(page_id, new partialScore(partialScore,0));
 						}
+						
+				        if(page_id.equals("0062"))
+				        {
+				        	System.out.print("");
+				        }
 					}
 					
 					
@@ -162,6 +174,7 @@ public class Query {
 						while(e.hasMoreElements())
 						{
 							String page_id = e.nextElement();
+					        
 							double partialScore = titlePhraseWeight.get(page_id);
 							if(vsScores.get(page_id) != null)
 							{
@@ -184,6 +197,8 @@ public class Query {
 		        double body = partialSum.body;
 		        double title = partialSum.title;
 		        
+
+		        
 		        boolean isFavorite = cf.isFavorite(username, page_id);
 		        
 		        //to approximate the document length
@@ -205,21 +220,19 @@ public class Query {
 		        it.remove(); // avoids a ConcurrentModificationException
 		    }
 		    
-		    Collections.sort(tempResult);
+		    //Collections.sort(tempResult);
 		    
 		    for(int i = 0; i < tempResult.size() && i < 50; i++)
 		    {
 		    	Score score = tempResult.elementAt(i);
 		    	if(Double.parseDouble(score.overall) != 0.0)
 		    		result.add(score);
-		    	else
-		    		break;
+		    	//else
+		    		//break;
 		    }
 		    
-		}
-		catch(Exception e)
-		{
-		}
+	
+
 
 	    long t2 = System.currentTimeMillis();
 	    
@@ -238,13 +251,15 @@ public class Query {
 
 		Query r = new Query();
 		ResultInfo info = new ResultInfo("", 0,0);
-		Vector<Score> result = r.getScore("Janie","\"HONG KONG\"", info);
+		Vector<Score> result = r.getScore("Janie","\"Internet Movie Database\"", info);
 		for(Score i: result)
 		{
 			System.out.println( i.page_id + " " + i.vsScoreBody + " " + i.vsScoreTitle + " " + i.bonus + " " + i.pageRank +  " " + i.overall);
 		}
 		
-		//System.out.print(StopStem.processing("to"));
+		
+		
+		//System.out.print(StopStem.processing("database"));
 		
 		
 	}
