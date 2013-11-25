@@ -71,17 +71,23 @@ public class ChangeFavorite {
 	 * @throws IOException 
 	 */
 	public static void main(String[] args) throws IOException {
+		String a = "\"hong kong\"";
+		System.out.println(a);
+		System.out.println(a.replaceAll("\"", "'"));
+		
+		
+		/*
 		ChangeFavorite changeFavorite = new ChangeFavorite();
 		/*for(int i =0;i< 10;i++)
 		{
 			changeFavorite.setFavorite("rhuangab", String.format("%04d", i));
-		}*/
+		}
 		Vector<String> favoriteList = changeFavorite.getFavoriteList("rhuangab");
 		for(String pageID: favoriteList)
 		{
 			System.out.println(pageID);
 		}
-		changeFavorite.finalize();
+		changeFavorite.finalize();*/
 	}
 
 }

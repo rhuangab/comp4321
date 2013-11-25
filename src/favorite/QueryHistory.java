@@ -50,6 +50,11 @@ public class QueryHistory {
 		return result;
 	}
 	
+	public void deleteQueryHistory(String username) throws IOException
+	{
+		queryHistory.delEntry(username);
+	}
+	
 	public void finalize() throws IOException
 	{
 		recman.commit();
