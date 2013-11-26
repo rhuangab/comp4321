@@ -23,7 +23,7 @@ public class Phrase {
 	private Hashtable<String, Double> bodyWeight;			// <pageId, phraseWeight>
 	private Hashtable<String, Double> titleWeight;			// <pageId, phraseWeight>
 	
-	private boolean hasWeight; 
+	private boolean wrongKey; 
 		
 	public Phrase(RecordManager _recman, String _words) throws IOException
 	{
@@ -32,24 +32,19 @@ public class Phrase {
 		wordID = new DataStruc(recman,"wordID");
 		invertedBodyWord = new DataStruc(recman, "bodyWord");
 		invertedTitleWord = new DataStruc(recman, "titleWord");	
-		bodydf = new Hashtable<String, Integer>();
-		titledf = new Hashtable<String, Integer>();
-		bodyFreqs = new Hashtable<String, Integer>();
-		titleFreqs = new Hashtable<String, Integer>();
-		bodyWeight = new Hashtable<String, Double>();
-		titleWeight = new Hashtable<String, Double>();
+
 		words = new Vector<String>();
 		String[] tmp = _words.split(" ");
-		hasWeight = false;
+		wrongKey = false;
 		for(int i = 0; i<tmp.length; i++) 
 		{
 			String wordStem = StopStem.processing(tmp[i]);
 			if(wordStem == null || wordStem.equals("")) continue;
 			String tmpKey = (String) wordID.getEntry(wordStem);
-			if(tmpKey == null || tmpKey.equals("")) hasWeight = true; 
+			if(tmpKey == null || tmpKey.equals("")) wrongKey = true; 
 			words.add(tmpKey);
 		}
-		if(!hasWeight) compWeight();
+		if(!wrongKey && words.size() > 0) compWeight();
 		//System.out.println(_words);
 	}
 	
@@ -62,6 +57,13 @@ public class Phrase {
 	
 	public void compWeight() throws IOException
 	{
+		bodydf = new Hashtable<String, Integer>();
+		titledf = new Hashtable<String, Integer>();
+		bodyFreqs = new Hashtable<String, Integer>();
+		titleFreqs = new Hashtable<String, Integer>();
+		bodyWeight = new Hashtable<String, Double>();
+		titleWeight = new Hashtable<String, Double>();
+		
 		compOneWeight(bodydf, bodyFreqs, bodyWeight);
 		compOneWeight(titledf, titleFreqs, titleWeight);
 	}
@@ -80,13 +82,22 @@ public class Phrase {
 		
 		// compute idf of this phrase
 		for(String oneWord: words)
-			idf += Math.log(pageInfo.getSize() * 1.0 / df.get(oneWord)) / Math.log(2);
+		{
+			int d = df.get(oneWord);
+			if(d == 0.0)
+			{
+				idf = 0.0;
+				break;
+			}
+			idf += Math.log(pageInfo.getSize() * 1.0 / d) / Math.log(2);
+		}
+			
 		
 		Enumeration<String> e = tf.keys();
 		while(e.hasMoreElements())
 		{
 			pageId = e.nextElement();
-			weight.put(pageId, (idf * (double)tf.get(pageId)) );
+			weight.put(pageId, (idf * (double)tf.get(pageId) / words.size())  );
 		}
 	}
 	
